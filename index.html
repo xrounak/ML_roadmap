@@ -1,0 +1,409 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML → DL → LLM Master Notebook</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: auto;
+            padding: 30px;
+            line-height: 1.7;
+            background:#fafafa;
+        }
+
+        h1{
+            text-align:center;
+            margin-bottom:40px;
+        }
+
+        h2{
+            background:#222;
+            color:white;
+            padding:10px;
+            border-radius:8px;
+        }
+
+        h3{
+            color:#1f4b99;
+        }
+
+        .section{
+            margin-bottom:50px;
+            padding:20px;
+            background:white;
+            border-radius:10px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        ul{
+            margin-left:20px;
+        }
+
+        .important{
+            color:red;
+            font-weight:bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>ML → DL → GenAI Master Notebook</h1>
+
+<!-- ===================================== -->
+<!-- PHASE 1 -->
+<!-- ===================================== -->
+
+<div class="section">
+<h2>Phase 1 : Classical Machine Learning</h2>
+
+<h3>Mathematics</h3>
+<ul>
+<li>Mean</li>
+<li>Variance</li>
+<li>Standard Deviation</li>
+<li>Covariance</li>
+<li>Correlation</li>
+<li>Bayes Theorem</li>
+<li>Gradient Descent</li>
+<li>Bias vs Variance</li>
+</ul>
+
+<h3>Data Processing</h3>
+<ul>
+<li>EDA</li>
+<li>Missing Values</li>
+<li>Outlier Detection</li>
+<li>Feature Engineering</li>
+<li>Feature Selection</li>
+<li>Cross Validation</li>
+<li>Data Leakage</li>
+</ul>
+
+<h3>Regression</h3>
+<ul>
+<li>Linear Regression</li>
+<li>MSE</li>
+<li>MAE</li>
+<li>RMSE</li>
+<li>R² Score</li>
+<li>Ridge Regression</li>
+<li>Lasso Regression</li>
+<li>ElasticNet</li>
+</ul>
+
+<h3>Classification</h3>
+<ul>
+<li>Logistic Regression</li>
+<li>Decision Trees</li>
+<li>Random Forest</li>
+<li>XGBoost</li>
+<li>Bagging</li>
+<li>Boosting</li>
+</ul>
+
+<h3>Metrics</h3>
+<ul>
+<li>Confusion Matrix</li>
+<li>Accuracy</li>
+<li>Precision</li>
+<li>Recall</li>
+<li>F1 Score</li>
+<li>ROC-AUC</li>
+</ul>
+
+<h3>Explainability</h3>
+<ul>
+<li>Feature Importance</li>
+<li>SHAP</li>
+</ul>
+
+<h3>Recommendation Systems</h3>
+<ul>
+<li>TF-IDF</li>
+<li>Cosine Similarity</li>
+<li>SVD</li>
+<li>Collaborative Filtering</li>
+<li>Cold Start Problem</li>
+</ul>
+</div>
+
+<!-- ===================================== -->
+<!-- PHASE 2 -->
+<!-- ===================================== -->
+
+<div class="section">
+<h2>Phase 2 : Neural Networks & Deep Learning</h2>
+
+<h3>Neural Network Basics</h3>
+<ul>
+<li>Perceptron</li>
+<li>Neuron</li>
+<li>Weights & Biases</li>
+<li>Forward Propagation</li>
+<li>Backpropagation</li>
+</ul>
+
+<h3>Activation Functions</h3>
+<ul>
+<li>Sigmoid</li>
+<li>Tanh</li>
+<li>ReLU</li>
+<li>Leaky ReLU</li>
+<li>Softmax</li>
+</ul>
+
+<h3>Optimization</h3>
+<ul>
+<li>SGD</li>
+<li>Mini Batch SGD</li>
+<li>Momentum</li>
+<li>RMSProp</li>
+<li>Adam</li>
+<li>AdamW</li>
+</ul>
+
+<h3>Regularization</h3>
+<ul>
+<li>Dropout</li>
+<li>Batch Normalization</li>
+<li>Weight Decay</li>
+<li>Early Stopping</li>
+</ul>
+
+<h3>PyTorch</h3>
+<ul>
+<li>Tensors</li>
+<li>Autograd</li>
+<li>nn.Module</li>
+<li>Dataset</li>
+<li>DataLoader</li>
+<li>GPU Training</li>
+</ul>
+
+<h3>Tabular Deep Learning</h3>
+<ul>
+<li>Entity Embeddings</li>
+<li>MLP</li>
+</ul>
+</div>
+
+<!-- ===================================== -->
+<!-- PHASE 3 -->
+<!-- ===================================== -->
+
+<div class="section">
+<h2>Phase 3 : Computer Vision</h2>
+
+<h3>CNN Fundamentals</h3>
+<ul>
+<li>Convolution</li>
+<li>Kernel</li>
+<li>Stride</li>
+<li>Padding</li>
+<li>Pooling</li>
+<li>Feature Maps</li>
+<li>Receptive Field</li>
+</ul>
+
+<h3>Architectures</h3>
+<ul>
+<li>LeNet</li>
+<li>AlexNet</li>
+<li>VGG</li>
+<li>ResNet</li>
+<li>EfficientNet</li>
+</ul>
+
+<h3>Transfer Learning</h3>
+<ul>
+<li>Feature Extraction</li>
+<li>Fine Tuning</li>
+<li>Layer Freezing</li>
+</ul>
+
+<h3>Object Detection</h3>
+<ul>
+<li>Bounding Boxes</li>
+<li>IoU</li>
+<li>NMS</li>
+<li>mAP</li>
+<li>YOLO</li>
+</ul>
+
+<h3>Segmentation</h3>
+<ul>
+<li>Semantic Segmentation</li>
+<li>Instance Segmentation</li>
+<li>U-Net</li>
+<li>SAM</li>
+<li>Dice Loss</li>
+</ul>
+</div>
+
+<!-- ===================================== -->
+<!-- PHASE 4 -->
+<!-- ===================================== -->
+
+<div class="section">
+<h2>Phase 4 : NLP</h2>
+
+<h3>Text Processing</h3>
+<ul>
+<li>Tokenization</li>
+<li>Stemming</li>
+<li>Lemmatization</li>
+<li>Stop Words</li>
+</ul>
+
+<h3>Embeddings</h3>
+<ul>
+<li>Word2Vec</li>
+<li>GloVe</li>
+<li>FastText</li>
+</ul>
+
+<h3>Sequence Models</h3>
+<ul>
+<li>RNN</li>
+<li>LSTM</li>
+<li>GRU</li>
+</ul>
+
+<h3>Attention</h3>
+<ul>
+<li>Query</li>
+<li>Key</li>
+<li>Value</li>
+<li>Self Attention</li>
+</ul>
+
+<h3>NLP Tasks</h3>
+<ul>
+<li>NER</li>
+<li>Sentiment Analysis</li>
+<li>Translation</li>
+<li>Summarization</li>
+</ul>
+</div>
+
+<!-- ===================================== -->
+<!-- PHASE 5 -->
+<!-- ===================================== -->
+
+<div class="section">
+<h2>Phase 5 : Transformers & LLMs</h2>
+
+<h3>Transformer Architecture</h3>
+<ul>
+<li>Encoder</li>
+<li>Decoder</li>
+<li>Multi Head Attention</li>
+<li>Positional Encoding</li>
+<li>Residual Connections</li>
+<li>Layer Normalization</li>
+</ul>
+
+<h3>Models</h3>
+<ul>
+<li>BERT</li>
+<li>GPT</li>
+<li>T5</li>
+<li>LLaMA</li>
+</ul>
+
+<h3>Training Concepts</h3>
+<ul>
+<li>Next Token Prediction</li>
+<li>Masked Language Modeling</li>
+<li>Causal Language Modeling</li>
+</ul>
+
+<h3>Fine Tuning</h3>
+<ul>
+<li>Full Fine Tuning</li>
+<li>LoRA</li>
+<li>QLoRA</li>
+<li>PEFT</li>
+</ul>
+</div>
+
+<!-- ===================================== -->
+<!-- PHASE 6 -->
+<!-- ===================================== -->
+
+<div class="section">
+<h2>Phase 6 : GenAI & Production AI</h2>
+
+<h3>Prompt Engineering</h3>
+<ul>
+<li>Zero Shot</li>
+<li>One Shot</li>
+<li>Few Shot</li>
+<li>Chain of Thought</li>
+<li>ReAct</li>
+</ul>
+
+<h3>Vector Databases</h3>
+<ul>
+<li>Embeddings</li>
+<li>FAISS</li>
+<li>ChromaDB</li>
+<li>Similarity Search</li>
+</ul>
+
+<h3>RAG</h3>
+<ul>
+<li>Chunking</li>
+<li>Retrieval</li>
+<li>Re-ranking</li>
+<li>Hybrid Search</li>
+</ul>
+
+<h3>Agents</h3>
+<ul>
+<li>Tool Calling</li>
+<li>Memory</li>
+<li>Planning</li>
+<li>Multi-Agent Systems</li>
+</ul>
+
+<h3>MLOps</h3>
+<ul>
+<li>Docker</li>
+<li>FastAPI</li>
+<li>MLflow</li>
+<li>DVC</li>
+<li>Weights & Biases</li>
+<li>Kubernetes</li>
+</ul>
+</div>
+
+<!-- ===================================== -->
+<!-- RESEARCH PAPERS -->
+<!-- ===================================== -->
+
+<div class="section">
+<h2>Research Papers Notes</h2>
+
+<ul>
+<li>Attention Is All You Need</li>
+<li>ResNet</li>
+<li>AlexNet</li>
+<li>YOLO</li>
+<li>U-Net</li>
+<li>Word2Vec</li>
+<li>BERT</li>
+<li>GPT Series</li>
+<li>LLaMA</li>
+</ul>
+</div>
+
+</body>
+</html>
+```
