@@ -1,409 +1,2066 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ML → DL → LLM Master Notebook</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML → LLM Complete Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080810;
+  --surface: #0d0d1a;
+  --surface2: #12121f;
+  --border: #1a1a2e;
+  --border2: #252540;
+  --text: #d8d8f0;
+  --muted: #4a4a6a;
+  --muted2: #6a6a8a;
+  --white: #f0f0ff;
 
-    <style>
-        body{
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: auto;
-            padding: 30px;
-            line-height: 1.7;
-            background:#fafafa;
-        }
+  --p1: #ff5c5c;
+  --p2: #ff8c42;
+  --p3: #4ade80;
+  --p4: #38bdf8;
+  --p5: #c084fc;
+  --p6: #facc15;
 
-        h1{
-            text-align:center;
-            margin-bottom:40px;
-        }
+  --modal-w: 860px;
+}
 
-        h2{
-            background:#222;
-            color:white;
-            padding:10px;
-            border-radius:8px;
-        }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-        h3{
-            color:#1f4b99;
-        }
+html { scroll-behavior: smooth; }
 
-        .section{
-            margin-bottom:50px;
-            padding:20px;
-            background:white;
-            border-radius:10px;
-            box-shadow:0 2px 8px rgba(0,0,0,0.08);
-        }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
 
-        ul{
-            margin-left:20px;
-        }
+/* Animated background */
+.bg-noise {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 20% 20%, rgba(96,60,220,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 80% 80%, rgba(250,204,21,0.04) 0%, transparent 60%),
+    linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+}
 
-        .important{
-            color:red;
-            font-weight:bold;
-        }
-    </style>
+/* ─── Layout ─── */
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 72px 28px 120px;
+}
+
+/* ─── Header ─── */
+.hero {
+  margin-bottom: 80px;
+  animation: fadeUp 0.8s ease both;
+}
+
+.hero-pre {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 20px;
+}
+.hero-pre::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--muted2);
+}
+
+.hero h1 {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: clamp(44px, 7vw, 88px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--white);
+}
+
+.hero h1 .grad {
+  background: linear-gradient(135deg, #facc15 0%, #f97316 40%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--muted2);
+  line-height: 1.8;
+  max-width: 540px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.stat-n {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.stat-l {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ─── Phase nav ─── */
+.phase-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 64px;
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+
+.pnav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  transition: all 0.2s;
+}
+.pnav-btn:hover, .pnav-btn.active {
+  border-color: var(--c);
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 8%, transparent);
+}
+.pnav-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c);
+  flex-shrink: 0;
+}
+
+/* ─── Phase section ─── */
+.phase-section {
+  margin-bottom: 80px;
+  animation: fadeUp 0.6s ease both;
+}
+
+.phase-head {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  margin-bottom: 8px;
+}
+
+.phase-label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--c);
+  opacity: 0.7;
+}
+
+.phase-title {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -0.03em;
+}
+
+.phase-desc {
+  font-size: 11px;
+  color: var(--muted2);
+  margin-bottom: 28px;
+  line-height: 1.7;
+  max-width: 600px;
+  padding-left: 2px;
+}
+
+/* ─── Project Grid ─── */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+/* ─── Project Card ─── */
+.pcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  display: block;
+}
+
+.pcard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--c);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.pcard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 0%, color-mix(in srgb, var(--c) 6%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.pcard:hover {
+  border-color: color-mix(in srgb, var(--c) 40%, transparent);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px color-mix(in srgb, var(--c) 8%, transparent);
+}
+
+.pcard:hover::before { transform: scaleX(1); }
+.pcard:hover::after { opacity: 1; }
+
+.pcard-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.pcard-num {
+  font-size: 10px;
+  color: var(--c);
+  opacity: 0.6;
+  letter-spacing: 0.1em;
+}
+
+.pcard-open {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.pcard:hover .pcard-open {
+  border-color: var(--c);
+  background: color-mix(in srgb, var(--c) 10%, transparent);
+}
+
+.pcard-open svg {
+  width: 12px;
+  height: 12px;
+  stroke: var(--muted2);
+  transition: stroke 0.2s;
+}
+.pcard:hover .pcard-open svg { stroke: var(--c); }
+
+.pcard-title {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 8px;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.pcard-desc {
+  font-size: 10.5px;
+  color: var(--muted2);
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+
+.pcard-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.ptag {
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border2);
+  color: var(--muted2);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.pcard-key {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--c);
+  opacity: 0.75;
+  font-style: italic;
+}
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,8,16,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  width: 100%;
+  max-width: var(--modal-w);
+  position: relative;
+  transform: translateY(20px) scale(0.98);
+  transition: transform 0.3s ease;
+  overflow: hidden;
+}
+.modal-overlay.open .modal { transform: none; }
+
+.modal-stripe {
+  height: 4px;
+  background: var(--c, #7c6aff);
+}
+
+.modal-head {
+  padding: 32px 36px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.modal-phase-tag {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 20%, transparent);
+  padding: 3px 10px;
+  border-radius: 3px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.modal-title {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.modal-num {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 64px;
+  font-weight: 800;
+  color: var(--c);
+  opacity: 0.12;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  font-size: 14px;
+  color: var(--muted2);
+}
+.modal-close:hover {
+  background: var(--border);
+  color: var(--white);
+}
+
+.modal-body {
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 680px) {
+  .modal-body { grid-template-columns: 1fr; }
+  .modal-head { padding: 24px 20px 20px; }
+  .modal-num { display: none; }
+  .modal-title { font-size: 22px; }
+}
+
+.modal-col {
+  padding: 28px 36px;
+  border-right: 1px solid var(--border);
+}
+.modal-col:last-child { border-right: none; }
+.modal-col.full {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--border);
+  border-right: none;
+}
+
+@media (max-width: 680px) {
+  .modal-col { padding: 20px; border-right: none; border-bottom: 1px solid var(--border); }
+  .modal-col:last-child { border-bottom: none; }
+}
+
+.section-title {
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Modal description */
+.modal-desc {
+  font-size: 11.5px;
+  color: var(--muted2);
+  line-height: 1.85;
+}
+
+/* Skills list */
+.skill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skill-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.skill-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--c);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.skill-name {
+  font-weight: 500;
+  color: var(--white);
+}
+
+.skill-detail {
+  color: var(--muted2);
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+/* Resource links */
+.res-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.res-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+  cursor: pointer;
+}
+
+.res-item:hover {
+  border-color: var(--border2);
+  background: var(--surface2);
+}
+
+.res-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.res-icon.yt { background: rgba(255,0,0,0.1); }
+.res-icon.paper { background: rgba(96,165,250,0.1); }
+.res-icon.docs { background: rgba(74,222,128,0.1); }
+.res-icon.course { background: rgba(250,204,21,0.1); }
+.res-icon.book { background: rgba(192,132,252,0.1); }
+.res-icon.github { background: rgba(255,255,255,0.06); }
+
+.res-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.res-name {
+  font-size: 11px;
+  color: var(--white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.res-meta {
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 2px;
+  letter-spacing: 0.05em;
+}
+
+.res-arrow {
+  font-size: 10px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+/* Hurdles */
+.hurdle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hurdle-item {
+  padding: 12px 14px;
+  border-radius: 6px;
+  border-left: 3px solid;
+  background: var(--surface);
+}
+
+.hurdle-item.hard { border-color: var(--p1); background: rgba(255,92,92,0.04); }
+.hurdle-item.medium { border-color: var(--p2); background: rgba(255,140,66,0.04); }
+.hurdle-item.tip { border-color: var(--p3); background: rgba(74,222,128,0.04); }
+
+.hurdle-label {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  opacity: 0.7;
+}
+.hard .hurdle-label { color: var(--p1); }
+.medium .hurdle-label { color: var(--p2); }
+.tip .hurdle-label { color: var(--p3); }
+
+.hurdle-text {
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* Papers */
+.paper-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.paper-item {
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  text-decoration: none;
+  display: block;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+
+.paper-item:hover {
+  border-color: color-mix(in srgb, var(--c) 30%, transparent);
+}
+
+.paper-title {
+  font-size: 11px;
+  color: var(--white);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.paper-meta {
+  font-size: 9px;
+  color: var(--muted2);
+  display: flex;
+  gap: 10px;
+}
+
+.paper-why {
+  font-size: 10px;
+  color: var(--muted2);
+  margin-top: 6px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* Roadmap inside modal */
+.roadmap-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.roadmap-step {
+  display: flex;
+  gap: 16px;
+  padding: 10px 0;
+  position: relative;
+}
+
+.roadmap-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 28px;
+  bottom: -10px;
+  width: 1px;
+  background: var(--border2);
+}
+
+.step-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--c);
+  background: color-mix(in srgb, var(--c) 12%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--c);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.step-content {}
+.step-title {
+  font-size: 12px;
+  color: var(--white);
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+.step-detail {
+  font-size: 10px;
+  color: var(--muted2);
+  line-height: 1.6;
+}
+
+/* Modal footer */
+.modal-footer {
+  padding: 20px 36px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mf-prev, .mf-next {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: var(--muted2);
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.mf-prev:hover, .mf-next:hover {
+  border-color: var(--c);
+  color: var(--c);
+}
+
+.mf-num {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Scroll to section highlight */
+.phase-section { scroll-margin-top: 40px; }
+</style>
 </head>
-
 <body>
+<div class="bg-noise"></div>
 
-<h1>ML → DL → GenAI Master Notebook</h1>
+<div class="wrap">
+  <!-- Hero -->
+  <header class="hero">
+    <p class="hero-pre">Complete Project Roadmap</p>
+    <h1>ML → DL →<br><span class="grad">Gen AI + LLM</span></h1>
+    <p class="hero-sub">
+      26 battle-tested projects. Click any card for the full breakdown — skills, resources, YouTube, research papers, step-by-step roadmap, and the exact hurdles you'll hit.
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-n">26</div><div class="stat-l">Projects</div></div>
+      <div class="stat"><div class="stat-n">6</div><div class="stat-l">Phases</div></div>
+      <div class="stat"><div class="stat-n">12–18</div><div class="stat-l">Months</div></div>
+      <div class="stat"><div class="stat-n">40+</div><div class="stat-l">Papers</div></div>
+    </div>
+  </header>
 
-<!-- ===================================== -->
-<!-- PHASE 1 -->
-<!-- ===================================== -->
+  <!-- Phase nav -->
+  <nav class="phase-nav" id="phase-nav"></nav>
 
-<div class="section">
-<h2>Phase 1 : Classical Machine Learning</h2>
-
-<h3>Mathematics</h3>
-<ul>
-<li>Mean</li>
-<li>Variance</li>
-<li>Standard Deviation</li>
-<li>Covariance</li>
-<li>Correlation</li>
-<li>Bayes Theorem</li>
-<li>Gradient Descent</li>
-<li>Bias vs Variance</li>
-</ul>
-
-<h3>Data Processing</h3>
-<ul>
-<li>EDA</li>
-<li>Missing Values</li>
-<li>Outlier Detection</li>
-<li>Feature Engineering</li>
-<li>Feature Selection</li>
-<li>Cross Validation</li>
-<li>Data Leakage</li>
-</ul>
-
-<h3>Regression</h3>
-<ul>
-<li>Linear Regression</li>
-<li>MSE</li>
-<li>MAE</li>
-<li>RMSE</li>
-<li>R² Score</li>
-<li>Ridge Regression</li>
-<li>Lasso Regression</li>
-<li>ElasticNet</li>
-</ul>
-
-<h3>Classification</h3>
-<ul>
-<li>Logistic Regression</li>
-<li>Decision Trees</li>
-<li>Random Forest</li>
-<li>XGBoost</li>
-<li>Bagging</li>
-<li>Boosting</li>
-</ul>
-
-<h3>Metrics</h3>
-<ul>
-<li>Confusion Matrix</li>
-<li>Accuracy</li>
-<li>Precision</li>
-<li>Recall</li>
-<li>F1 Score</li>
-<li>ROC-AUC</li>
-</ul>
-
-<h3>Explainability</h3>
-<ul>
-<li>Feature Importance</li>
-<li>SHAP</li>
-</ul>
-
-<h3>Recommendation Systems</h3>
-<ul>
-<li>TF-IDF</li>
-<li>Cosine Similarity</li>
-<li>SVD</li>
-<li>Collaborative Filtering</li>
-<li>Cold Start Problem</li>
-</ul>
+  <!-- Phases rendered by JS -->
+  <div id="phases-container"></div>
 </div>
 
-<!-- ===================================== -->
-<!-- PHASE 2 -->
-<!-- ===================================== -->
-
-<div class="section">
-<h2>Phase 2 : Neural Networks & Deep Learning</h2>
-
-<h3>Neural Network Basics</h3>
-<ul>
-<li>Perceptron</li>
-<li>Neuron</li>
-<li>Weights & Biases</li>
-<li>Forward Propagation</li>
-<li>Backpropagation</li>
-</ul>
-
-<h3>Activation Functions</h3>
-<ul>
-<li>Sigmoid</li>
-<li>Tanh</li>
-<li>ReLU</li>
-<li>Leaky ReLU</li>
-<li>Softmax</li>
-</ul>
-
-<h3>Optimization</h3>
-<ul>
-<li>SGD</li>
-<li>Mini Batch SGD</li>
-<li>Momentum</li>
-<li>RMSProp</li>
-<li>Adam</li>
-<li>AdamW</li>
-</ul>
-
-<h3>Regularization</h3>
-<ul>
-<li>Dropout</li>
-<li>Batch Normalization</li>
-<li>Weight Decay</li>
-<li>Early Stopping</li>
-</ul>
-
-<h3>PyTorch</h3>
-<ul>
-<li>Tensors</li>
-<li>Autograd</li>
-<li>nn.Module</li>
-<li>Dataset</li>
-<li>DataLoader</li>
-<li>GPU Training</li>
-</ul>
-
-<h3>Tabular Deep Learning</h3>
-<ul>
-<li>Entity Embeddings</li>
-<li>MLP</li>
-</ul>
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-stripe" id="modal-stripe"></div>
+    <div class="modal-head" id="modal-head">
+      <div>
+        <div class="modal-phase-tag" id="modal-phase-tag"></div>
+        <div class="modal-title" id="modal-title"></div>
+      </div>
+      <div class="modal-num" id="modal-num"></div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
 </div>
 
-<!-- ===================================== -->
-<!-- PHASE 3 -->
-<!-- ===================================== -->
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+const phases = [
+  {
+    id: 'p1',
+    color: '#ff5c5c',
+    label: 'Phase 1',
+    title: 'Classical ML',
+    desc: 'Before touching a neural network, solidify supervised learning fundamentals. These four projects give you the mathematical intuition (loss functions, optimization, generalization) that every deep learning concept rests on.',
+    projects: [
+      {
+        num: '01',
+        title: 'House Price Prediction',
+        short: 'Linear regression from scratch. Gradient descent by hand. Your first taste of what "learning" means mathematically.',
+        tags: ['Linear Regression', 'Gradient Descent', 'NumPy', 'sklearn', 'EDA'],
+        keyInsight: 'Implement gradient descent manually before using sklearn — the math must live in your hands',
+        skills: [
+          { name: 'Linear Regression Math', detail: 'Normal equation, MSE loss, OLS derivation, R²' },
+          { name: 'Gradient Descent', detail: 'Batch, stochastic, mini-batch. Learning rate sensitivity.' },
+          { name: 'Feature Engineering', detail: 'Scaling (StandardScaler, MinMax), polynomial features, interaction terms' },
+          { name: 'Model Evaluation', detail: 'Train/val/test split, cross-validation, bias-variance tradeoff' },
+          { name: 'NumPy Mastery', detail: 'Vectorized operations, broadcasting — avoid for loops' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'StatQuest: Linear Regression Clearly Explained', url: 'https://www.youtube.com/watch?v=nk2CQITm_eo', meta: 'StatQuest with Josh Starmer' },
+          { type: 'yt', icon: '▶', name: 'Andrew Ng CS229 Lecture 1 & 2 — Linear Regression', url: 'https://www.youtube.com/watch?v=4b4MUYve_U8', meta: 'Stanford CS229 · Foundation' },
+          { type: 'course', icon: '📘', name: 'CS229 Lecture Notes (ch 1)', url: 'https://cs229.stanford.edu/main_notes.pdf', meta: 'Stanford · Free PDF' },
+          { type: 'docs', icon: '📗', name: 'sklearn LinearRegression docs', url: 'https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html', meta: 'Official docs' },
+          { type: 'github', icon: '⌨', name: 'Kaggle: House Prices Dataset', url: 'https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques', meta: 'Dataset + leaderboard' },
+        ],
+        papers: [
+          { title: 'The Elements of Statistical Learning (Ch 3 — Linear Methods for Regression)', authors: 'Hastie, Tibshirani, Friedman', year: '2009', url: 'https://web.stanford.edu/~hastie/ElemStatLearn/', why: 'The bible of classical ML. Chapter 3 covers everything about linear regression at a graduate level.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'EDA first', detail: 'Load Ames Housing dataset. Visualize distributions, correlations. Drop or impute NaNs.' },
+          { n: 2, title: 'Implement GD from scratch', detail: 'NumPy only. Compute MSE, gradient, update weights. Plot loss vs epoch.' },
+          { n: 3, title: 'Verify with sklearn', detail: 'Fit LinearRegression. Confirm same weights. Understand what fit() does.' },
+          { n: 4, title: 'Feature engineering', detail: 'Log-transform skewed features. Create area ratios. One-hot categoricals.' },
+          { n: 5, title: 'Cross-validation', detail: 'KFold CV. Regularization with Ridge/Lasso. Compare RMSE scores.' },
+          { n: 6, title: 'Submit to Kaggle', detail: 'Target top 25%. Document what improved score the most.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Gradient descent diverges — learning rate too high. Start with lr=0.001 and plot loss. If it oscillates, reduce by 10x.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Scaling features: never fit scaler on test data. Fit on train, transform both. This is a data leakage mistake.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Log-transform the target (SalePrice). Linear regression assumes homoscedastic errors — a right-skewed target violates this.' },
+        ],
+      },
+      {
+        num: '02',
+        title: 'Titanic Survival Classifier',
+        short: 'Logistic regression + decision trees. Feature engineering, missing values, confusion matrices, ROC-AUC.',
+        tags: ['Logistic Regression', 'Decision Tree', 'Pandas', 'EDA', 'Classification'],
+        keyInsight: 'Classification metrics matter more than accuracy — a model predicting all survivors is 62% accurate and useless',
+        skills: [
+          { name: 'Logistic Regression', detail: 'Sigmoid, log-loss (cross-entropy), MLE derivation' },
+          { name: 'Decision Trees', detail: 'Gini impurity, information gain, max_depth regularization' },
+          { name: 'Feature Engineering', detail: 'Title extraction from names, family size, cabin deck' },
+          { name: 'Handling Missing Data', detail: 'Median imputation, indicator variables, KNN imputer' },
+          { name: 'Classification Metrics', detail: 'Precision, recall, F1, ROC curve, AUC-ROC interpretation' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'StatQuest: Logistic Regression', url: 'https://www.youtube.com/watch?v=yIYKR4sgzI8', meta: 'StatQuest — best visual explanation' },
+          { type: 'yt', icon: '▶', name: 'StatQuest: Decision Trees', url: 'https://www.youtube.com/watch?v=7VeUPuFGJHk', meta: 'StatQuest — Gini vs entropy' },
+          { type: 'yt', icon: '▶', name: 'Krish Naik: Titanic EDA + Logistic Regression', url: 'https://www.youtube.com/watch?v=zK4-wqpXDoI', meta: 'End to end walkthrough' },
+          { type: 'docs', icon: '📗', name: 'sklearn: Metrics and Scoring', url: 'https://scikit-learn.org/stable/modules/model_evaluation.html', meta: 'Official scoring guide' },
+          { type: 'github', icon: '⌨', name: 'Kaggle Titanic Competition', url: 'https://www.kaggle.com/competitions/titanic', meta: 'Best beginner ML competition' },
+        ],
+        papers: [
+          { title: 'A comparison of prediction accuracy, complexity, and training time of thirty-three old and new classification algorithms', authors: 'Caruana & Niculescu-Mizil', year: '2006', url: 'https://dl.acm.org/doi/10.1145/1143844.1143874', why: 'Empirical study comparing classifiers. Gives you intuition for when logistic regression beats tree methods.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Data exploration', detail: 'Survival rates by sex, class, age. Missing values in Age (20%), Cabin (77%), Embarked.' },
+          { n: 2, title: 'Feature engineering', detail: 'Extract Title from Name. FamilySize = SibSp + Parch + 1. IsAlone flag.' },
+          { n: 3, title: 'Baseline model', detail: 'Logistic regression. Get ~79% accuracy on CV.' },
+          { n: 4, title: 'Decision tree', detail: 'Tune max_depth. Compare with logistic regression.' },
+          { n: 5, title: 'Interpret', detail: 'Confusion matrix, precision/recall per class, ROC curve.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Cabin column: 77% missing. Don\'t impute — extract deck letter where available, create "HasCabin" binary feature.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Over-fitting decision tree to training data. Always use cross-validation. max_depth=3-5 usually generalizes better.' },
+          { type: 'tip', label: 'Pro Tip', text: 'class_weight="balanced" in LogisticRegression if classes are unequal. The Titanic dataset has ~38% survived — imbalance matters.' },
+        ],
+      },
+      {
+        num: '03',
+        title: 'Customer Churn Predictor',
+        short: 'Random Forest + XGBoost on tabular data. Ensembles, feature importance, SHAP explainability.',
+        tags: ['Random Forest', 'XGBoost', 'SHAP', 'Cross-Validation', 'Ensembles'],
+        keyInsight: 'SHAP values are how you explain model decisions to non-technical stakeholders — critical for industry',
+        skills: [
+          { name: 'Random Forests', detail: 'Bagging, feature subsampling, OOB error, tree correlation reduction' },
+          { name: 'Gradient Boosting (XGBoost)', detail: 'Boosting vs bagging, learning rate, n_estimators, regularization' },
+          { name: 'Hyperparameter Tuning', detail: 'GridSearchCV, RandomizedSearchCV, Optuna (recommended)' },
+          { name: 'SHAP Explainability', detail: 'Global feature importance, SHAP waterfall plots, force plots' },
+          { name: 'Class Imbalance', detail: 'SMOTE, class weights, threshold tuning for F1 vs precision-recall tradeoff' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'StatQuest: Random Forests', url: 'https://www.youtube.com/watch?v=J4Wdy0Wc_xQ', meta: 'StatQuest — Part 1 & 2' },
+          { type: 'yt', icon: '▶', name: 'StatQuest: XGBoost series', url: 'https://www.youtube.com/watch?v=OtD8wVaFm6E', meta: 'Best XGBoost explanation (4 parts)' },
+          { type: 'yt', icon: '▶', name: 'SHAP Values Explained — Abhishek Thakur', url: 'https://www.youtube.com/watch?v=Tg8aPwPPJ9c', meta: 'Practical SHAP walkthrough' },
+          { type: 'docs', icon: '📗', name: 'XGBoost Documentation', url: 'https://xgboost.readthedocs.io/en/stable/', meta: 'Official XGBoost docs' },
+          { type: 'docs', icon: '📗', name: 'SHAP Library Docs', url: 'https://shap.readthedocs.io/en/latest/', meta: 'shap library reference' },
+          { type: 'github', icon: '⌨', name: 'Telco Churn Dataset (Kaggle)', url: 'https://www.kaggle.com/datasets/blastchar/telco-customer-churn', meta: 'Classic churn dataset' },
+        ],
+        papers: [
+          { title: 'Random Forests', authors: 'Leo Breiman', year: '2001', url: 'https://link.springer.com/article/10.1023/A:1010933404324', why: 'Original paper. Read Section 1 and 2 for the core idea. Understand why combining weak learners works.' },
+          { title: 'XGBoost: A Scalable Tree Boosting System', authors: 'Chen & Guestrin', year: '2016', url: 'https://arxiv.org/abs/1603.02754', why: 'KDD 2016 best paper. Section 2 explains the math. You\'ll use this library constantly.' },
+          { title: 'A Unified Approach to Interpreting Model Predictions (SHAP)', authors: 'Lundberg & Lee', year: '2017', url: 'https://arxiv.org/abs/1705.07874', why: 'Foundational paper for ML explainability. Required reading before any production ML project.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Load + Explore', detail: 'Telco churn. Check class balance (~26% churn). Explore tenure, contract type, charges.' },
+          { n: 2, title: 'Baseline', detail: 'Logistic regression baseline. Establish F1 target to beat.' },
+          { n: 3, title: 'Random Forest', detail: 'Default params first. Feature importance via .feature_importances_.' },
+          { n: 4, title: 'XGBoost', detail: 'Tune with Optuna. Track CV F1. Early stopping to avoid overfitting.' },
+          { n: 5, title: 'SHAP analysis', detail: 'Global SHAP bar plot. Single prediction waterfall plot. Explain to "stakeholder".' },
+          { n: 6, title: 'Deploy as API', detail: 'FastAPI endpoint. Input: customer features → Output: churn probability + top 3 SHAP reasons.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'XGBoost overfits when n_estimators is high without early stopping. Always use eval_set + early_stopping_rounds=50.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Optimizing accuracy on imbalanced data. Always report F1, precision, recall. Tune classification threshold on F1, not accuracy.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Optuna > GridSearchCV for hyperparameter tuning. 50x faster for the same search space. Use it from project 3 onwards.' },
+        ],
+      },
+      {
+        num: '04',
+        title: 'Movie Recommender System',
+        short: 'Content-based (TF-IDF + cosine similarity) + Collaborative Filtering (SVD matrix factorization). Deploy as Flask API.',
+        tags: ['TF-IDF', 'SVD', 'Cosine Similarity', 'Collaborative Filtering', 'Flask'],
+        keyInsight: 'Cold start problem is the real ML challenge here — learn it because it appears in every real recommender interview',
+        skills: [
+          { name: 'TF-IDF & Cosine Similarity', detail: 'Term frequency, IDF weighting, cosine similarity in high dims' },
+          { name: 'Matrix Factorization (SVD)', detail: 'User-item matrix, latent factors, SVD decomposition, Surprise library' },
+          { name: 'Recommendation Metrics', detail: 'RMSE on ratings, Precision@K, Recall@K, NDCG' },
+          { name: 'Cold Start Problem', detail: 'New user/item strategies: content fallback, popularity bias' },
+          { name: 'Flask Deployment', detail: 'REST API, JSON responses, basic frontend with HTML/JS' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'Recommender Systems Full Course — Deepak Thakkar', url: 'https://www.youtube.com/watch?v=1YoD0fg3_EM', meta: 'Comprehensive RS tutorial' },
+          { type: 'yt', icon: '▶', name: 'Matrix Factorization for Recommender Systems', url: 'https://www.youtube.com/watch?v=ZspR5PZemcs', meta: 'SVD explainer' },
+          { type: 'docs', icon: '📗', name: 'Surprise Library (SVD)', url: 'https://surpriselib.com/', meta: 'Python recommender library' },
+          { type: 'github', icon: '⌨', name: 'MovieLens 100K Dataset', url: 'https://grouplens.org/datasets/movielens/100k/', meta: '100K ratings, classic benchmark' },
+        ],
+        papers: [
+          { title: 'Matrix Factorization Techniques for Recommender Systems', authors: 'Koren, Bell, Volinsky', year: '2009', url: 'https://ieeexplore.ieee.org/document/5197422', why: 'The Netflix Prize paper. How SVD++ works. Foundational for all modern recommenders.' },
+          { title: 'BPR: Bayesian Personalized Ranking from Implicit Feedback', authors: 'Rendle et al.', year: '2009', url: 'https://arxiv.org/abs/1205.2618', why: 'Key paper for implicit feedback scenarios (clicks, views vs explicit ratings).' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Content-based', detail: 'TF-IDF on movie genres+description. Cosine similarity matrix. "Top 10 similar to Interstellar."' },
+          { n: 2, title: 'Collaborative filtering', detail: 'User-item rating matrix. SVD via Surprise. Cross-validate RMSE.' },
+          { n: 3, title: 'Hybrid system', detail: 'Blend: if user has ratings use CF, else fall back to content-based.' },
+          { n: 4, title: 'Cold start strategy', detail: 'New user → ask 5 genre preferences → seed CF with averages.' },
+          { n: 5, title: 'Flask API', detail: 'GET /recommend?user_id=42 → JSON list of movies with scores.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Sparse matrix memory issues with 100K+ users. Use scipy.sparse.csr_matrix instead of dense numpy arrays.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Popularity bias — SVD recommends blockbusters to everyone. Add diversity by mixing top-N with lower-ranked but personalized items.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Evaluate with Precision@10 and NDCG, not just RMSE. A model with low RMSE can still recommend irrelevant items at the top.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'p2',
+    color: '#ff8c42',
+    label: 'Phase 2',
+    title: 'Neural Networks',
+    desc: 'The most important phase. Project 05 (backprop from scratch) is the single highest-ROI thing you can build. After this, PyTorch is just convenience syntax.',
+    projects: [
+      {
+        num: '05',
+        title: 'Neural Net from Scratch (MNIST)',
+        short: 'Implement forward pass, backprop, and weight updates using only NumPy. No PyTorch. No abstractions. The most important project on this list.',
+        tags: ['Backpropagation', 'NumPy only', 'Chain Rule', 'MNIST', 'Softmax'],
+        keyInsight: 'Do NOT skip this for PyTorch. If you understand chain rule through code, every future architecture will make sense',
+        skills: [
+          { name: 'Forward Pass', detail: 'Matrix multiply, activation functions (ReLU, sigmoid, softmax) from scratch' },
+          { name: 'Backpropagation', detail: 'Chain rule, gradient flow, dL/dW and dL/db for each layer' },
+          { name: 'Weight Initialization', detail: 'Xavier/He init. Why random ≠ zero. Vanishing/exploding gradients.' },
+          { name: 'Mini-batch SGD', detail: 'Batch sampling, vectorized gradient computation' },
+          { name: 'Debugging Gradients', detail: 'Gradient checking with finite differences — the ultimate sanity test' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'Andrej Karpathy: Neural Nets Zero to Hero (micrograd)', url: 'https://www.youtube.com/watch?v=VMj-3S1tku0', meta: 'THE definitive tutorial. Watch all 8 hours.' },
+          { type: 'yt', icon: '▶', name: '3Blue1Brown: Neural Networks Series (4 videos)', url: 'https://www.youtube.com/watch?v=aircAruvnKk', meta: 'Best visual intuition for backprop' },
+          { type: 'yt', icon: '▶', name: 'Samson Zhang: Neural Net from Scratch', url: 'https://www.youtube.com/watch?v=w8yWXqWQYmU', meta: 'NumPy MNIST implementation, 30 min' },
+          { type: 'course', icon: '📘', name: 'CS231n Notes: Backpropagation', url: 'https://cs231n.github.io/optimization-2/', meta: 'Stanford · Clear chain rule walkthrough' },
+          { type: 'github', icon: '⌨', name: 'karpathy/micrograd', url: 'https://github.com/karpathy/micrograd', meta: 'Minimal autograd in 100 lines' },
+        ],
+        papers: [
+          { title: 'Learning Representations by Back-propagating Errors', authors: 'Rumelhart, Hinton, Williams', year: '1986', url: 'https://www.nature.com/articles/323533a0', why: 'The original backprop paper. 4 pages. Read it after implementing to see how it matches your code.' },
+          { title: 'Efficient BackProp', authors: 'LeCun, Bottou, Orr, Müller', year: '1998', url: 'http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf', why: 'Practical tricks: weight init, learning rate, normalization. Still relevant 25 years later.' },
+          { title: 'Delving Deep into Rectifiers (He Init)', authors: 'He, Zhang, Ren, Sun', year: '2015', url: 'https://arxiv.org/abs/1502.01852', why: 'Why He initialization is used for ReLU networks. The math behind kaiming_uniform.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Implement sigmoid + forward pass', detail: '2-layer network on MNIST. Just get predictions out.' },
+          { n: 2, title: 'Compute cross-entropy loss', detail: 'Softmax output, log-loss. Verify loss decreases from random init (ln 10 ≈ 2.3).' },
+          { n: 3, title: 'Backprop by hand', detail: 'Derive dL/dW2, dL/dW1 on paper first. Then code. Gradient check with finite differences.' },
+          { n: 4, title: 'Mini-batch training loop', detail: 'Shuffle, batch, update. Plot loss + accuracy curves.' },
+          { n: 5, title: 'Add ReLU + He init', detail: 'Compare sigmoid vs ReLU convergence speed. Add another hidden layer.' },
+          { n: 6, title: 'Hit 97% accuracy', detail: 'Pure NumPy, no GPU. 97%+ is achievable. If not, debug gradients.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Biggest Blocker', text: 'Softmax + cross-entropy backprop is confusing. The combined gradient is simply (y_hat - y_true) — derive this algebraically before coding.' },
+          { type: 'hard', label: 'Blocker', text: 'Exploding/vanishing gradients with deep networks. Add gradient clipping (np.clip) and verify with gradient checking.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Always start by overfitting a single batch of 32 samples to ~100% accuracy. If your net can\'t overfit one batch, something is wrong before you even try to generalize.' },
+        ],
+      },
+      {
+        num: '06',
+        title: 'Rebuild in PyTorch',
+        short: 'Rebuild project 05 in PyTorch. Understand what autograd, nn.Module, DataLoader, and Adam do under the hood.',
+        tags: ['PyTorch', 'Autograd', 'nn.Module', 'DataLoader', 'Adam'],
+        keyInsight: 'PyTorch is project 05 with convenience wrappers. After building from scratch, every API call will make sense',
+        skills: [
+          { name: 'PyTorch Autograd', detail: 'Computational graph, .backward(), .grad, no_grad context' },
+          { name: 'nn.Module', detail: 'Custom layers, forward(), parameters(), state_dict()' },
+          { name: 'DataLoader', detail: 'Dataset class, batching, shuffling, num_workers for speed' },
+          { name: 'Optimizers', detail: 'SGD vs Adam vs AdamW. Momentum, weight decay explained' },
+          { name: 'Training Loop', detail: 'zero_grad, forward, loss, backward, step pattern' },
+          { name: 'GPU Usage', detail: '.to(device), CUDA tensors, device-agnostic code' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'PyTorch Official Tutorial — 60 Minute Blitz', url: 'https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html', meta: 'Official intro — do this' },
+          { type: 'yt', icon: '▶', name: 'Aladdin Persson: PyTorch Full Tutorial', url: 'https://www.youtube.com/watch?v=2S1dgHpqCdk', meta: '~10 hours comprehensive series' },
+          { type: 'docs', icon: '📗', name: 'PyTorch Docs', url: 'https://pytorch.org/docs/stable/', meta: 'Official — bookmark this' },
+          { type: 'docs', icon: '📗', name: 'PyTorch: Writing Custom Datasets', url: 'https://pytorch.org/tutorials/beginner/data_loading_tutorial.html', meta: 'Dataset/DataLoader guide' },
+        ],
+        papers: [
+          { title: 'Adam: A Method for Stochastic Optimization', authors: 'Kingma & Ba', year: '2014', url: 'https://arxiv.org/abs/1412.6980', why: 'The Adam paper. ~200K citations. Understand why it converges faster than SGD. Read Section 2-3.' },
+          { title: 'Automatic Differentiation in Machine Learning: a Survey', authors: 'Baydin et al.', year: '2018', url: 'https://arxiv.org/abs/1502.05767', why: 'Explains reverse-mode autodiff — what PyTorch\'s autograd does. Section 3 is the key.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Port forward pass', detail: 'Replace NumPy matmul with nn.Linear. Single forward call.' },
+          { n: 2, title: 'Use autograd', detail: 'Remove manual gradient code. Call loss.backward(). Verify same gradients.' },
+          { n: 3, title: 'Custom Dataset class', detail: 'Implement __len__ and __getitem__. Wrap in DataLoader.' },
+          { n: 4, title: 'Adam optimizer', detail: 'Compare Adam vs SGD convergence curves on same data.' },
+          { n: 5, title: 'GPU training', detail: 'Move model + data to CUDA. Measure speedup.' },
+          { n: 6, title: 'Add LR scheduler', detail: 'StepLR or CosineAnnealingLR. Plot LR schedule.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Forgetting optimizer.zero_grad() causes gradient accumulation across batches. Always call it at the start of each training step.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Moving only model to GPU but not data (or vice versa). Make device = torch.device("cuda" if available else "cpu") and use consistently.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Use torchinfo (pip install torchinfo) to print model summary with layer shapes. Essential for debugging architecture issues.' },
+        ],
+      },
+      {
+        num: '07',
+        title: 'Tabular Deep Learning',
+        short: 'Apply MLPs to structured data. Batch norm, dropout, entity embeddings for categoricals. Beat XGBoost.',
+        tags: ['MLP', 'BatchNorm', 'Dropout', 'Embeddings', 'Tabular'],
+        keyInsight: 'Entity embeddings for categorical variables is the technique that makes deep learning competitive with gradient boosting on tabular data',
+        skills: [
+          { name: 'Batch Normalization', detail: 'Internal covariate shift, running mean/var, train vs eval mode' },
+          { name: 'Dropout', detail: 'Inverted dropout, test-time behavior, optimal rates by layer depth' },
+          { name: 'Entity Embeddings', detail: 'Categorical vars as learned dense vectors (faster convergence than OHE)' },
+          { name: 'Learning Rate Finding', detail: 'LR Range Test (Smith 2017), fastai lr_find equivalent' },
+          { name: 'Regularization', detail: 'L1/L2, weight decay in AdamW, early stopping' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'Jeremy Howard: Tabular DL — fastai course', url: 'https://www.youtube.com/watch?v=v33ROFXaKSA', meta: 'Practical DL for Coders Lesson 6' },
+          { type: 'yt', icon: '▶', name: 'Batch Normalization Explained — Andrew Ng', url: 'https://www.youtube.com/watch?v=nUUqwaxLnWs', meta: 'Deeplearning.ai' },
+          { type: 'docs', icon: '📗', name: 'PyTorch nn.BatchNorm1d', url: 'https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm1d.html', meta: 'Official docs' },
+          { type: 'github', icon: '⌨', name: 'Rossmann Store Sales — Kaggle', url: 'https://www.kaggle.com/competitions/rossmann-store-sales', meta: 'Classic tabular competition' },
+        ],
+        papers: [
+          { title: 'Entity Embeddings of Categorical Variables', authors: 'Guo & Berkhahn', year: '2016', url: 'https://arxiv.org/abs/1604.06737', why: 'The paper that showed embeddings beat one-hot for tabular ML. 3rd place Kaggle solution using entity embeddings.' },
+          { title: 'Batch Normalization: Accelerating Deep Network Training', authors: 'Ioffe & Szegedy', year: '2015', url: 'https://arxiv.org/abs/1502.03167', why: 'Original batch norm paper. Section 2 explains the problem; Section 3 the solution.' },
+          { title: 'Dropout: A Simple Way to Prevent Neural Networks from Overfitting', authors: 'Srivastava et al.', year: '2014', url: 'https://jmlr.org/papers/v15/srivastava14a.html', why: 'Foundational regularization technique. Section 3 explains the ensemble interpretation.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Baseline MLP', detail: 'Adult income or Rossmann. Simple Linear→ReLU→Linear. Get baseline accuracy.' },
+          { n: 2, title: 'Add embeddings', detail: 'Categorical vars → embedding layers. See accuracy improvement.' },
+          { n: 3, title: 'BatchNorm + Dropout', detail: 'Add after each hidden layer. Monitor val loss vs train loss gap.' },
+          { n: 4, title: 'Beat XGBoost', detail: 'Tune until MLP > XGBoost on same data. Document what helped most.' },
+          { n: 5, title: 'Deploy', detail: 'FastAPI prediction endpoint. Docker container.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Batch norm behaves differently in train vs eval mode. Always call model.eval() at test time and model.train() during training.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Embedding dimensions: a good rule of thumb is min(50, (n_unique+1)//2). Don\'t use a 512-dim embedding for a 5-category variable.' },
+          { type: 'tip', label: 'Pro Tip', text: 'On tabular data, XGBoost often beats deep learning unless you have >1M rows. Don\'t force DL. The goal is understanding embeddings and batch norm, not beating tree methods every time.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'p3',
+    color: '#4ade80',
+    label: 'Phase 3',
+    title: 'Computer Vision',
+    desc: 'Spatial structure in data requires spatial inductive bias in models. CNNs are that bias. Build them from scratch, then leverage pretrained weights to solve real problems.',
+    projects: [
+      {
+        num: '08',
+        title: 'CNN from Scratch (CIFAR-10)',
+        short: 'Build a CNN from scratch: conv layers, pooling, receptive fields. Understand spatial feature hierarchies.',
+        tags: ['CNN', 'Conv2D', 'MaxPool', 'Data Augmentation', 'CIFAR-10'],
+        keyInsight: 'A conv layer is a spatially-shared linear layer with a tiny receptive field. Visualize what each filter learns.',
+        skills: [
+          { name: 'Convolution Operation', detail: 'Kernel, stride, padding, output size formula, dilated convolutions' },
+          { name: 'Receptive Field', detail: 'How stacking conv layers grows RF. Why deep thin > shallow wide.' },
+          { name: 'Pooling', detail: 'MaxPool vs AvgPool, global average pooling for classification head' },
+          { name: 'Data Augmentation', detail: 'RandomFlip, RandomCrop, ColorJitter, MixUp, CutMix' },
+          { name: 'Filter Visualization', detail: 'Gradient-based visualization, activation maps, what filters learn' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'CS231n Lecture 5: CNNs — Andrej Karpathy', url: 'https://www.youtube.com/watch?v=bNb2fEVKeEo', meta: 'Stanford — definitive CNN lecture' },
+          { type: 'yt', icon: '▶', name: 'PyTorch CNN Tutorial — Aladdin Persson', url: 'https://www.youtube.com/watch?v=wnK3uWv_WkU', meta: 'Code walkthrough' },
+          { type: 'course', icon: '📘', name: 'CS231n Notes: CNNs', url: 'https://cs231n.github.io/convolutional-networks/', meta: 'Best written CNN explanation' },
+          { type: 'docs', icon: '📗', name: 'torchvision transforms', url: 'https://pytorch.org/vision/stable/transforms.html', meta: 'Data augmentation API' },
+        ],
+        papers: [
+          { title: 'Gradient-Based Learning Applied to Document Recognition (LeNet)', authors: 'LeCun et al.', year: '1998', url: 'http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf', why: 'The original CNN paper. Section 2 explains the architecture you\'ll build.' },
+          { title: 'Very Deep Convolutional Networks (VGGNet)', authors: 'Simonyan & Zisserman', year: '2014', url: 'https://arxiv.org/abs/1409.1556', why: 'Proves that depth matters more than filter size. Your CIFAR-10 net should follow this design principle.' },
+          { title: 'mixup: Beyond Empirical Risk Minimization', authors: 'Zhang et al.', year: '2017', url: 'https://arxiv.org/abs/1710.09412', why: 'Simple but powerful augmentation. Read Section 2 — it\'s 3 lines of code but improves accuracy 1-2%.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'MLP baseline on CIFAR-10', detail: 'Flatten 32x32x3 → MLP. Get ~52% accuracy. Understand the ceiling.' },
+          { n: 2, title: 'Simple CNN', detail: '2 conv + pool blocks. Compare accuracy. Understand why spatial structure helps.' },
+          { n: 3, title: 'Deeper CNN', detail: 'Match VGG design principle. Add BN after each conv. Target 85%+.' },
+          { n: 4, title: 'Data augmentation', detail: 'RandomCrop, RandomFlip. Measure val accuracy improvement.' },
+          { n: 5, title: 'Visualize filters', detail: 'Visualize what conv1 filters look like. Compare to known Gabor filters.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Channels dimension order: PyTorch is (N, C, H, W). Common error: passing (N, H, W, C). Check tensor.shape before every conv layer.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Batch norm after activation vs before: Conv → BN → ReLU is the modern standard. BN before activation was original but both are used.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Use learning rate 0.01 with SGD+momentum for CNNs, not Adam. CNNs trained with SGD often generalize better. Try both and compare.' },
+        ],
+      },
+      {
+        num: '09',
+        title: 'Transfer Learning: Dog Breed Classifier',
+        short: 'Fine-tune ResNet50 / EfficientNet on a small custom dataset. Feature extraction vs full fine-tuning. Differential learning rates.',
+        tags: ['ResNet', 'EfficientNet', 'Transfer Learning', 'Fine-tuning', 'torchvision'],
+        keyInsight: 'Pretrained ImageNet features are general enough that 20 training images per class can get 90%+ accuracy',
+        skills: [
+          { name: 'Transfer Learning Modes', detail: 'Feature extraction (freeze all), partial fine-tuning, full fine-tuning' },
+          { name: 'Layer Freezing', detail: 'requires_grad=False, when to freeze/unfreeze, layer-wise LR' },
+          { name: 'Custom Classification Head', detail: 'Replace final FC layer, global average pooling, dropout before head' },
+          { name: 'Learning Rate for Fine-tuning', detail: 'Small LR for pretrained layers (1e-5), larger for head (1e-3)' },
+          { name: 'Evaluation & Confusion Matrix', detail: 'Grad-CAM visualization, per-class accuracy, hard negative mining' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'Transfer Learning PyTorch — Official Tutorial', url: 'https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html', meta: 'Official PyTorch guide' },
+          { type: 'yt', icon: '▶', name: 'Grad-CAM Visualization — Aladdin Persson', url: 'https://www.youtube.com/watch?v=oRpumyQ-wjs', meta: 'Visualize what model attends to' },
+          { type: 'docs', icon: '📗', name: 'torchvision.models', url: 'https://pytorch.org/vision/stable/models.html', meta: 'All pretrained models' },
+          { type: 'github', icon: '⌨', name: 'Stanford Dogs Dataset', url: 'http://vision.stanford.edu/aditya86/ImageNetDogs/', meta: '120 breeds, 20K images' },
+        ],
+        papers: [
+          { title: 'Deep Residual Learning for Image Recognition (ResNet)', authors: 'He, Zhang, Ren, Sun', year: '2015', url: 'https://arxiv.org/abs/1512.03385', why: 'Most cited CV paper. Residual connections solve vanishing gradients for deep nets. Build one to understand skip connections.' },
+          { title: 'How transferable are features in deep neural networks?', authors: 'Yosinski et al.', year: '2014', url: 'https://arxiv.org/abs/1411.1792', why: 'Scientific study of which layers transfer. When to freeze early layers vs fine-tune everything.' },
+          { title: 'Grad-CAM: Visual Explanations from Deep Networks', authors: 'Selvaraju et al.', year: '2019', url: 'https://arxiv.org/abs/1610.02391', why: 'Gradient-weighted class activation maps. Essential for debugging and explaining CNN predictions.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Load pretrained ResNet50', detail: 'Print architecture. Understand what features it learned on ImageNet.' },
+          { n: 2, title: 'Feature extraction mode', detail: 'Freeze all, replace head. Train on 1K dog images. Get baseline.' },
+          { n: 3, title: 'Gradual unfreezing', detail: 'Unfreeze layer4, then layer3. Use 10x smaller LR for these.' },
+          { n: 4, title: 'Test-time augmentation', detail: 'Multiple augmented passes at inference, average predictions.' },
+          { n: 5, title: 'Grad-CAM', detail: 'Visualize activations for 5 breeds. Verify model looks at the dog, not the background.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Training all layers with the same LR destroys pretrained features. Layer 1-3 need LR ~1e-5, classification head needs 1e-3. Use param groups in optimizer.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Forgetting to normalize with ImageNet mean/std ([0.485,0.456,0.406], [0.229,0.224,0.225]). Pretrained models expect this normalization.' },
+          { type: 'tip', label: 'Pro Tip', text: 'EfficientNet-B0 is better than ResNet50 at the same parameter count. Use timm library (pip install timm) for access to 500+ pretrained models.' },
+        ],
+      },
+      {
+        num: '10',
+        title: 'Object Detection: License Plate',
+        short: 'YOLOv8 to detect license plates. Custom labeling, bounding boxes, mAP, IoU, NMS.',
+        tags: ['YOLOv8', 'YOLO', 'Object Detection', 'mAP', 'Roboflow', 'NMS'],
+        keyInsight: 'Detection is harder than classification — you need to predict both what and where simultaneously',
+        skills: [
+          { name: 'Bounding Box Regression', detail: 'IoU, GIoU loss, anchor boxes vs anchor-free detection' },
+          { name: 'Non-Maximum Suppression', detail: 'Why multiple predictions overlap, NMS algorithm, confidence threshold' },
+          { name: 'mAP Metric', detail: 'AP per class, mAP@50 vs mAP@50-95, precision-recall curve' },
+          { name: 'YOLOv8 Architecture', detail: 'Backbone, neck (PAN), detection head, multi-scale output' },
+          { name: 'Custom Data Labeling', detail: 'Roboflow annotation, YOLO format, train/val split strategy' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'YOLOv8 Custom Training — Nicolai Nielsen', url: 'https://www.youtube.com/watch?v=wuZtUMEiKWY', meta: 'End-to-end walkthrough' },
+          { type: 'yt', icon: '▶', name: 'YOLO History & Architecture — Aladdin Persson', url: 'https://www.youtube.com/watch?v=n9_XyCGr-MI', meta: 'Understanding YOLO evolution' },
+          { type: 'docs', icon: '📗', name: 'Ultralytics YOLOv8 Docs', url: 'https://docs.ultralytics.com/', meta: 'Official docs — well written' },
+          { type: 'docs', icon: '📗', name: 'Roboflow Universe', url: 'https://universe.roboflow.com/', meta: 'Pre-labeled datasets including plates' },
+        ],
+        papers: [
+          { title: 'You Only Look Once: Unified, Real-Time Object Detection', authors: 'Redmon et al.', year: '2015', url: 'https://arxiv.org/abs/1506.02640', why: 'Original YOLO paper. Understand the grid-cell prediction paradigm before using YOLOv8.' },
+          { title: 'Feature Pyramid Networks for Object Detection', authors: 'Lin et al.', year: '2016', url: 'https://arxiv.org/abs/1612.03144', why: 'FPN is in every modern detector including YOLOv8. Understanding it explains multi-scale detection.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Download or create dataset', detail: 'Roboflow has labeled plate datasets. Augment to 500+ images minimum.' },
+          { n: 2, title: 'Train YOLOv8n', detail: 'yolo detect train. Monitor mAP@50. Target 90%+.' },
+          { n: 3, title: 'Evaluate', detail: 'Confusion matrix, precision-recall curve. Analyze FP and FN cases.' },
+          { n: 4, title: 'Export + inference', detail: 'Export to ONNX. Run inference on video stream.' },
+          { n: 5, title: 'Connect OCR', detail: 'Feed detected plate crops to Tesseract/EasyOCR to read the number.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Low mAP with small dataset. Minimum 200 images with varied lighting, angles, distances. Use Roboflow augmentation to multiply data 3x.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Tight confidence threshold rejects true positives. Start at 0.25 and tune based on your precision-recall tradeoff requirement.' },
+          { type: 'tip', label: 'Pro Tip', text: 'YOLOv8n (nano) trains in minutes. Use it for experiments. Only scale to YOLOv8m/l for final model if accuracy isn\'t enough.' },
+        ],
+      },
+      {
+        num: '11',
+        title: 'Image Segmentation',
+        short: 'U-Net semantic segmentation or Segment Anything Model (SAM). Pixel-level prediction. Background removal.',
+        tags: ['U-Net', 'SAM', 'Segmentation', 'IoU Loss', 'Dice Score'],
+        keyInsight: 'Segmentation = classification at pixel level. The skip connections in U-Net are what enable fine-grained boundary recovery',
+        skills: [
+          { name: 'Segmentation vs Detection', detail: 'Semantic vs instance segmentation, panoptic segmentation' },
+          { name: 'U-Net Architecture', detail: 'Encoder-decoder, skip connections, upsampling vs transposed conv' },
+          { name: 'Segmentation Losses', detail: 'Dice loss, IoU loss, BCE + Dice combo — why BCE alone fails' },
+          { name: 'SAM Usage', detail: 'Prompting with points/boxes, automatic mask generation, fine-tuning SAM' },
+          { name: 'Evaluation', detail: 'Mean IoU, Dice score, pixel accuracy' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'U-Net Explained and Implemented — Aladdin Persson', url: 'https://www.youtube.com/watch?v=IHq1t7NxS8k', meta: 'Code + explanation' },
+          { type: 'yt', icon: '▶', name: 'Segment Anything (SAM) — Yannic Kilcher', url: 'https://www.youtube.com/watch?v=eYhHZy6jSr4', meta: 'Paper explained with code' },
+          { type: 'docs', icon: '📗', name: 'SAM GitHub + Demo', url: 'https://github.com/facebookresearch/segment-anything', meta: 'Meta AI official repo' },
+          { type: 'github', icon: '⌨', name: 'COCO Segmentation Dataset', url: 'https://cocodataset.org/', meta: '330K images, 80 categories' },
+        ],
+        papers: [
+          { title: 'U-Net: Convolutional Networks for Biomedical Image Segmentation', authors: 'Ronneberger et al.', year: '2015', url: 'https://arxiv.org/abs/1505.04597', why: 'One of the most cited papers in CV. Skip connections idea is everywhere (ResNet, Transformers). Short and clear.' },
+          { title: 'Segment Anything', authors: 'Kirillov et al. (Meta AI)', year: '2023', url: 'https://arxiv.org/abs/2304.02643', why: 'Foundation model approach to segmentation. Understand promptable segmentation and the SAM architecture.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Build U-Net from scratch', detail: 'Double conv blocks, encoder path, bottleneck, decoder with skip connections.' },
+          { n: 2, title: 'Train on Oxford Pets or COCO subset', detail: 'Dice + BCE loss combo. Monitor mIoU.' },
+          { n: 3, title: 'Try SAM zero-shot', detail: 'Point prompt on same images. Compare to your U-Net without fine-tuning.' },
+          { n: 4, title: 'Gradio background remover', detail: 'Upload image → SAM → remove background → download. Visual impact.' },
+          { n: 5, title: 'Deploy', detail: 'Gradio app or Streamlit. Show before/after comparison.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Binary cross-entropy fails with class imbalance (e.g., small objects on large background). Use Dice loss or Focal loss instead.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Transposed convolution produces checkerboard artifacts. Use bilinear upsample + conv instead. See Odena et al. 2016.' },
+          { type: 'tip', label: 'Pro Tip', text: 'SAM for inference, U-Net for learning. Use SAM to auto-label your own dataset, then train a lightweight U-Net for deployment.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'p4',
+    color: '#38bdf8',
+    label: 'Phase 4',
+    title: 'NLP + OCR',
+    desc: 'Text is sequences, sequences need structure, structure needs attention. This phase walks from bag-of-words to Transformers — do not skip the early steps, they\'re why attention was invented.',
+    projects: [
+      {
+        num: '12',
+        title: 'Sentiment Analyzer (Traditional NLP)',
+        short: 'Bag-of-words → TF-IDF → Naive Bayes / SVM on IMDB reviews. Text preprocessing pipeline.',
+        tags: ['TF-IDF', 'Naive Bayes', 'SVM', 'NLTK', 'spaCy', 'Text Preprocessing'],
+        keyInsight: 'TF-IDF + LinearSVC reaches 89% on IMDB. Know this baseline before claiming a neural network "works better"',
+        skills: [
+          { name: 'Text Preprocessing', detail: 'Tokenization, stopwords, stemming vs lemmatization, lowercasing' },
+          { name: 'Bag-of-Words & TF-IDF', detail: 'Vocabulary, n-grams, IDF weighting, sparse matrix representation' },
+          { name: 'Naive Bayes for Text', detail: 'Multinomial NB, Laplace smoothing, why it works despite independence assumption' },
+          { name: 'LinearSVC for Text', detail: 'Why SVM beats NB on longer documents, kernel trick, margin maximization' },
+          { name: 'spaCy Pipeline', detail: 'Tokenizer, POS tagger, NER, dependency parsing, custom components' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'NLP Zero to Hero — TensorFlow playlist', url: 'https://www.youtube.com/watch?v=fNxaJsNG3-s', meta: 'Comprehensive NLP series' },
+          { type: 'yt', icon: '▶', name: 'spaCy Tutorial — Sentdex', url: 'https://www.youtube.com/watch?v=cgwDB1THUBY', meta: 'Practical spaCy walkthrough' },
+          { type: 'docs', icon: '📗', name: 'spaCy Documentation', url: 'https://spacy.io/usage', meta: 'Best NLP library docs' },
+          { type: 'github', icon: '⌨', name: 'IMDB Movie Reviews Dataset', url: 'https://huggingface.co/datasets/imdb', meta: '50K reviews, balanced classes' },
+        ],
+        papers: [
+          { title: 'A Sentimental Education: Sentiment Analysis Using Subjectivity Summarization Based on Minimum Cuts', authors: 'Pang & Lee', year: '2004', url: 'https://arxiv.org/abs/cs/0409058', why: 'Seminal NLP sentiment paper. Establishes the BOW baselines you\'ll beat.' },
+          { title: 'Baselines and Bigrams: Simple, Good Sentiment and Topic Classification', authors: 'Wang & Manning', year: '2012', url: 'https://aclanthology.org/P12-2018/', why: 'Shows that NB-SVM often beats neural nets on sentiment. Your strong baseline.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Text preprocessing', detail: 'HTML remove, lowercase, tokenize, remove stopwords, lemmatize with spaCy.' },
+          { n: 2, title: 'BOW baseline', detail: 'CountVectorizer + MultinomialNB. Record accuracy.' },
+          { n: 3, title: 'TF-IDF + SVM', detail: 'TfidfVectorizer (unigram + bigram) + LinearSVC. Should hit 88-89%.' },
+          { n: 4, title: 'Error analysis', detail: 'Inspect 20 false positives/negatives. What patterns does the model miss?' },
+          { n: 5, title: 'Feature analysis', detail: 'Top 20 positive/negative features. Do they make semantic sense?' },
+        ],
+        hurdles: [
+          { type: 'medium', label: 'Common Pitfall', text: 'Including stop words sometimes helps in sentiment analysis ("not good", "not bad"). Try with and without, and measure.' },
+          { type: 'tip', label: 'Pro Tip', text: 'TF-IDF with char n-grams (analyzer="char_wb", ngram_range=(3,5)) is surprisingly powerful for misspelled text or informal language.' },
+        ],
+      },
+      {
+        num: '13',
+        title: 'Word2Vec Embeddings Explorer',
+        short: 'Train Word2Vec from scratch. Explore semantic arithmetic. Visualize with t-SNE. Foundation for all of modern NLP.',
+        tags: ['Word2Vec', 'Skip-gram', 'CBOW', 'Embeddings', 't-SNE', 'UMAP'],
+        keyInsight: 'king − man + woman = queen is not magic — it falls out of a regression objective. Understanding this is understanding all of modern AI',
+        skills: [
+          { name: 'Skip-gram & CBOW', detail: 'Context window, center vs context words, objective functions' },
+          { name: 'Negative Sampling', detail: 'Why full softmax is too slow, noise contrastive estimation' },
+          { name: 'Embedding Space', detail: 'Cosine similarity in high dims, analogy tasks, semantic clusters' },
+          { name: 't-SNE / UMAP', detail: 'Dimensionality reduction for visualization, perplexity, min_dist' },
+          { name: 'Training Efficiency', detail: 'Subsampling frequent words, window size effect, dimensionality choice' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'Word2Vec Explained — StatQuest', url: 'https://www.youtube.com/watch?v=viZrOnJclY0', meta: 'StatQuest — intuitive explanation' },
+          { type: 'yt', icon: '▶', name: 'CS224N Lecture 1 & 2 — Word Vectors', url: 'https://www.youtube.com/watch?v=8rXD5-xhemo', meta: 'Stanford NLP · Deep treatment' },
+          { type: 'docs', icon: '📗', name: 'gensim Word2Vec docs', url: 'https://radimrehurek.com/gensim/models/word2vec.html', meta: 'Production-grade Word2Vec' },
+          { type: 'github', icon: '⌨', name: 'Text8 Wikipedia corpus', url: 'http://mattmahoney.net/dc/textdata.html', meta: '100MB Wikipedia text for training' },
+        ],
+        papers: [
+          { title: 'Efficient Estimation of Word Representations in Vector Space (Word2Vec)', authors: 'Mikolov et al.', year: '2013', url: 'https://arxiv.org/abs/1301.3781', why: 'The paper that started modern NLP. 50K+ citations. Read it — it\'s only 9 pages.' },
+          { title: 'GloVe: Global Vectors for Word Representation', authors: 'Pennington, Socher, Manning', year: '2014', url: 'https://aclanthology.org/D14-1162/', why: 'Alternative to Word2Vec. Understanding both gives you a complete picture of static embeddings.' },
+          { title: 'Visualizing Data using t-SNE', authors: 'van der Maaten & Hinton', year: '2008', url: 'https://jmlr.org/papers/v9/vandermaaten08a.html', why: 'The t-SNE paper. Section 2-3 explain why PCA fails in high dims and how t-SNE solves it.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Build Skip-gram from scratch', detail: 'Implement in NumPy. Context window, one-hot inputs, softmax output.' },
+          { n: 2, title: 'Train on Wikipedia text', detail: 'Use gensim for efficient training. 100-300 dims, window=5.' },
+          { n: 3, title: 'Analogy evaluation', detail: 'Test king-man+woman, Paris-France+Germany. Measure on word analogy task.' },
+          { n: 4, title: 't-SNE visualization', detail: 'Plot 1000 most common words. Color by POS or semantic category.' },
+          { n: 5, title: 'Downstream usage', detail: 'Use embeddings as features in sentiment classifier. Compare to project 12.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Training Word2Vec from scratch is slow without negative sampling. Full softmax over 50K vocab is too expensive. Implement negative sampling or use gensim sg=1.' },
+          { type: 'medium', label: 'Common Pitfall', text: 't-SNE is not for distance measurement, only cluster visualization. Don\'t interpret t-SNE distances as semantic distances.' },
+          { type: 'tip', label: 'Pro Tip', text: 'UMAP is faster and often more informative than t-SNE for embeddings. pip install umap-learn. Use both and compare.' },
+        ],
+      },
+      {
+        num: '14',
+        title: 'Fake News Classifier with LSTM',
+        short: 'LSTM-based text classifier. Understand sequence modeling, hidden states, and exactly why we need attention.',
+        tags: ['LSTM', 'RNN', 'Sequence Modeling', 'GRU', 'Vanishing Gradients'],
+        keyInsight: 'Build an LSTM and notice how early tokens\' information fades by the end of a long sequence. This exact frustration motivates attention.',
+        skills: [
+          { name: 'RNN Forward Pass', detail: 'Hidden state update equation, unrolling through time, parameter sharing' },
+          { name: 'Vanishing Gradients in RNNs', detail: 'Why gradients shrink over 50+ steps, TBPTT truncation' },
+          { name: 'LSTM Cell', detail: 'Forget, input, output gates. Cell state vs hidden state. Intuition.' },
+          { name: 'GRU', detail: 'Simplified LSTM with reset + update gates. When to use GRU vs LSTM.' },
+          { name: 'Sequence Batching', detail: 'Padding, pack_padded_sequence, masking in PyTorch' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'Understanding LSTMs — Colah\'s Blog (video explainer)', url: 'https://www.youtube.com/watch?v=YCzL96nL7j0', meta: 'Best LSTM intuition video' },
+          { type: 'yt', icon: '▶', name: 'Karpathy: RNN Effectiveness + char-level LM', url: 'https://www.youtube.com/watch?v=iX5V1WpxxkY', meta: 'Practical LSTM usage' },
+          { type: 'docs', icon: '📗', name: 'Colah\'s Blog: Understanding LSTMs', url: 'https://colah.github.io/posts/2015-08-Understanding-LSTMs/', meta: 'The most-read ML blog post ever' },
+          { type: 'github', icon: '⌨', name: 'LIAR dataset (fake news)', url: 'https://huggingface.co/datasets/liar', meta: '12.8K labeled political statements' },
+        ],
+        papers: [
+          { title: 'Long Short-Term Memory', authors: 'Hochreiter & Schmidhuber', year: '1997', url: 'https://www.bioinf.jku.at/publications/older/2604.pdf', why: 'Original LSTM paper. Dense but important. Read Section 1 (motivation) and Section 2 (architecture).' },
+          { title: 'Learning Phrase Representations using RNN Encoder-Decoder', authors: 'Cho et al. (GRU)', year: '2014', url: 'https://arxiv.org/abs/1406.1078', why: 'Introduces GRU. Shows RNN encoder-decoder for seq2seq — foundation of machine translation and eventually Transformers.' },
+          { title: 'On the difficulty of training Recurrent Neural Networks', authors: 'Pascanu et al.', year: '2013', url: 'https://arxiv.org/abs/1211.5063', why: 'Explains exploding/vanishing gradients in RNNs rigorously. Motivates why we need attention.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Implement RNN from scratch', detail: 'Single GRU cell in NumPy. Understand the state update equation.' },
+          { n: 2, title: 'Embed + LSTM in PyTorch', detail: 'nn.Embedding → nn.LSTM → Linear classifier on fake news.' },
+          { n: 3, title: 'Handle variable lengths', detail: 'pad_sequence, pack_padded_sequence. Proper masking.' },
+          { n: 4, title: 'Compare with TF-IDF baseline', detail: 'If LSTM barely beats TF-IDF, understand why on short texts it struggles.' },
+          { n: 5, title: 'Visualize hidden states', detail: 'PCA/t-SNE on final hidden states. Do classes cluster?' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'pack_padded_sequence requires sequences sorted by length in descending order. Check this before batching or use enforce_sorted=False.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Using last hidden state for classification misses the whole sequence. Use bidirectional LSTM (concatenate forward + backward final hidden states).' },
+          { type: 'tip', label: 'Pro Tip', text: 'Pretrained GloVe embeddings as initial nn.Embedding weights dramatically improve convergence. Download glove.6B.100d.txt and load into embedding matrix.' },
+        ],
+      },
+      {
+        num: '15',
+        title: 'OCR Pipeline: Document Digitizer',
+        short: 'End-to-end OCR: image preprocessing → Tesseract/EasyOCR → structured text extraction. Bilingual Hindi+English.',
+        tags: ['Tesseract', 'EasyOCR', 'OpenCV', 'Preprocessing', 'Gradio', 'Bilingual'],
+        keyInsight: 'OCR accuracy is 80% preprocessing and 20% model. Binarization, deskewing, and denoising matter more than which OCR engine you use',
+        skills: [
+          { name: 'Image Preprocessing for OCR', detail: 'Binarization (Otsu), deskewing, denoising, contrast enhancement' },
+          { name: 'Tesseract Config', detail: 'PSM modes (page segmentation), OEM, language packs, hOCR output' },
+          { name: 'EasyOCR', detail: 'Multi-language support, confidence scores, bounding box extraction' },
+          { name: 'Layout Analysis', detail: 'Line detection, text region extraction, table structure recovery' },
+          { name: 'Post-processing', detail: 'Spell correction (pyspellchecker), regex cleaning, confidence filtering' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'OCR with Python Tutorial — Nicholas Renotte', url: 'https://www.youtube.com/watch?v=wbgSMn_vLuo', meta: 'EasyOCR + OpenCV end to end' },
+          { type: 'yt', icon: '▶', name: 'Tesseract OCR Complete Guide', url: 'https://www.youtube.com/watch?v=ADV-AjAXHdc', meta: 'Full Tesseract tutorial' },
+          { type: 'docs', icon: '📗', name: 'EasyOCR GitHub', url: 'https://github.com/JaidedAI/EasyOCR', meta: '80+ languages, good Hindi support' },
+          { type: 'docs', icon: '📗', name: 'Tesseract Docs', url: 'https://tesseract-ocr.github.io/tessdoc/', meta: 'Official Tesseract documentation' },
+        ],
+        papers: [
+          { title: 'An Overview of the Tesseract OCR Engine', authors: 'Smith', year: '2007', url: 'https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/33418.pdf', why: 'Tesseract\'s architecture. Understanding line finding, word recognition, and language models inside OCR.' },
+          { title: 'EAST: An Efficient and Accurate Scene Text Detector', authors: 'Zhou et al.', year: '2017', url: 'https://arxiv.org/abs/1704.03155', why: 'State-of-art text detection. Used as detector before EasyOCR/Tesseract for recognition in pipelines.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Baseline Tesseract', detail: 'Raw image → tesseract. Note accuracy on different document types.' },
+          { n: 2, title: 'Preprocessing pipeline', detail: 'Grayscale → Otsu binarization → deskew → denoise. Measure improvement.' },
+          { n: 3, title: 'Hindi support', detail: 'Add hin language pack to Tesseract. Test on Devanagari text images.' },
+          { n: 4, title: 'EasyOCR comparison', detail: 'Run same images through EasyOCR. Measure accuracy, note speed difference.' },
+          { n: 5, title: 'Gradio UI', detail: 'Upload image → extract text → display with confidence highlights.' },
+          { n: 6, title: 'Structured extraction', detail: 'Extract key-value pairs from Aadhaar/form images using regex post-processing.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Tesseract fails on skewed images. Implement deskewing: detect angle using Hough transform or minAreaRect on text blobs, then cv2.warpAffine.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Tesseract PSM mode mismatch: use --psm 6 for single uniform block of text, --psm 11 for sparse text, --psm 3 for full page.' },
+          { type: 'tip', label: 'Pro Tip', text: 'For production document OCR, PaddleOCR often beats both Tesseract and EasyOCR and supports 80+ languages. Add it as a comparison.' },
+        ],
+      },
+      {
+        num: '16',
+        title: 'NER with BERT Fine-tuning',
+        short: 'Fine-tune BERT for token classification. Extract person, org, location entities from text.',
+        tags: ['BERT', 'NER', 'HuggingFace', 'Token Classification', 'BIO Tagging'],
+        keyInsight: 'BERT is pretrained context — fine-tuning it on 500 labeled examples beats training an LSTM from scratch on 50K',
+        skills: [
+          { name: 'BERT Architecture', detail: 'Masked LM pretraining, NSP, WordPiece tokenization, CLS token' },
+          { name: 'Token Classification Head', detail: 'Per-token linear layer, handling subword tokens in BIO scheme' },
+          { name: 'BIO Tagging Scheme', detail: 'B-PER, I-PER, B-ORG, I-ORG, O tags. Span extraction from BIO.' },
+          { name: 'HuggingFace Transformers', detail: 'AutoTokenizer, AutoModelForTokenClassification, Trainer API' },
+          { name: 'Evaluation', detail: 'Seqeval library for entity-level F1. Not token-level accuracy.' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'BERT Fine-tuning for NER — Abhishek Thakur', url: 'https://www.youtube.com/watch?v=MqQ7rqRllIc', meta: 'Practical NER fine-tuning' },
+          { type: 'yt', icon: '▶', name: 'HuggingFace Course — Chapter 7 (Token Classification)', url: 'https://www.youtube.com/watch?v=wVHdVlPScxA', meta: 'Official HF course' },
+          { type: 'docs', icon: '📗', name: 'HuggingFace Token Classification Guide', url: 'https://huggingface.co/docs/transformers/tasks/token_classification', meta: 'Official HF guide' },
+          { type: 'github', icon: '⌨', name: 'CoNLL-2003 NER Dataset', url: 'https://huggingface.co/datasets/conll2003', meta: 'Standard NER benchmark' },
+        ],
+        papers: [
+          { title: 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding', authors: 'Devlin et al.', year: '2018', url: 'https://arxiv.org/abs/1810.04805', why: 'Most important NLP paper of the decade. Read Section 3 (pretraining) and Section 4 (fine-tuning). Memorize Figure 1.' },
+          { title: 'Introduction to the CoNLL-2003 Shared Task: Language-Independent Named Entity Recognition', authors: 'Tjong Kim Sang & De Meulder', year: '2003', url: 'https://aclanthology.org/W03-0419/', why: 'Defines the NER task, BIO scheme, and evaluation metrics you\'ll use.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Understand BERT tokenization', detail: 'WordPiece splits words. Map subword tokens back to original words for BIO labels.' },
+          { n: 2, title: 'Load pretrained BERT', detail: 'bert-base-cased (case matters for NER). Attach token classification head.' },
+          { n: 3, title: 'Train on CoNLL-2003', detail: 'HuggingFace Trainer. Target entity-level F1 > 85%.' },
+          { n: 4, title: 'Evaluate with seqeval', detail: 'Report per-entity-type F1. PER usually highest, MISC lowest.' },
+          { n: 5, title: 'Indian domain fine-tune', detail: 'Collect 200 labeled sentences with Indian names/orgs. Few-shot fine-tune.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Subword tokenization misaligns with BIO labels. Only assign labels to the first subword token of each word; mask other subword positions with -100 in loss.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Using uncased BERT for NER is a mistake — casing is a strong signal for proper nouns. Always use bert-base-cased for NER tasks.' },
+          { type: 'tip', label: 'Pro Tip', text: 'For Indian languages, use ai4bharat/indic-bert or MuRIL (Google\'s multilingual BERT trained on Indian languages). Significant improvement over base BERT.' },
+        ],
+      },
+      {
+        num: '17',
+        title: 'Attention from Scratch',
+        short: 'Implement scaled dot-product attention and multi-head attention in pure PyTorch. No nn.MultiheadAttention. The gateway to Transformers.',
+        tags: ['Attention', 'Q K V', 'Scaled Dot-Product', 'Multi-Head', 'Positional Encoding'],
+        keyInsight: 'Attention(Q,K,V) = softmax(QKᵀ/√d)V — this single equation is behind GPT, BERT, DALL-E, Whisper, and AlphaFold',
+        skills: [
+          { name: 'Attention Intuition', detail: 'Q as query, K as key, V as value — database retrieval analogy' },
+          { name: 'Scaled Dot-Product Attention', detail: 'Why √d scaling, softmax, masking for causal LM' },
+          { name: 'Multi-Head Attention', detail: 'Multiple attention subspaces, concatenation, projection' },
+          { name: 'Positional Encoding', detail: 'Sinusoidal PE, learned PE, relative PE. Why absolute position matters.' },
+          { name: 'Attention Visualization', detail: 'Plotting attention weights, interpreting which tokens attend to which' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: '3Blue1Brown: Attention — Chapter 5 & 6', url: 'https://www.youtube.com/watch?v=eMlx5fFNoYc', meta: 'Best visual intuition for attention' },
+          { type: 'yt', icon: '▶', name: 'Illustrated Attention — Yannic Kilcher', url: 'https://www.youtube.com/watch?v=iDulhoQ2pro', meta: 'Paper walkthrough with visuals' },
+          { type: 'docs', icon: '📗', name: 'The Illustrated Transformer — Jay Alammar', url: 'https://jalammar.github.io/illustrated-transformer/', meta: 'Best written Transformer explanation' },
+          { type: 'docs', icon: '📗', name: 'Annotated Transformer', url: 'https://nlp.seas.harvard.edu/2018/04/03/attention.html', meta: 'Harvard NLP — code + paper side-by-side' },
+        ],
+        papers: [
+          { title: 'Attention Is All You Need', authors: 'Vaswani et al.', year: '2017', url: 'https://arxiv.org/abs/1706.03762', why: 'The most important ML paper of the last decade. Read it 3 times. Figure 1, Section 3 cover the full architecture.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Implement scaled dot-product attention', detail: 'Q, K, V matmuls, scaling by 1/√d, softmax. Verify on small example.' },
+          { n: 2, title: 'Add causal masking', detail: 'Upper-triangular mask for language modeling (GPT style).' },
+          { n: 3, title: 'Multi-head attention', detail: 'Split Q/K/V into h heads. Compute attention per head. Concat + project.' },
+          { n: 4, title: 'Positional encoding', detail: 'Add sinusoidal PE. Visualize PE as heatmap.' },
+          { n: 5, title: 'Visualize attention', detail: 'On a simple sequence task, plot attention weights. Verify pattern makes sense.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Multi-head reshaping is confusing. Q shape is (B, T, d_model) → reshape to (B, T, h, d_k) → transpose to (B, h, T, d_k). Draw this transformation before coding.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Applying softmax before masking. Always add -1e9 to masked positions before softmax, not after. Otherwise softmax produces non-zero values for masked positions.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Implement both self-attention and cross-attention (Q from decoder, K/V from encoder). You\'ll need cross-attention in project 22 for seq2seq translation.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'p5',
+    color: '#c084fc',
+    label: 'Phase 5',
+    title: 'Generative AI',
+    desc: 'Generation requires modeling distributions, not just boundaries. VAEs, GANs, and Diffusion models each attack this from a different angle. Build all three before using Stable Diffusion.',
+    projects: [
+      {
+        num: '18',
+        title: 'VAE: Face Generation',
+        short: 'Variational Autoencoder on CelebA. Reparameterization trick, KL divergence, latent space interpolation.',
+        tags: ['VAE', 'KL Divergence', 'Reparameterization', 'Latent Space', 'CelebA'],
+        keyInsight: 'The reparameterization trick (z = μ + σ·ε) is a one-line trick that makes backprop possible through stochastic sampling',
+        skills: [
+          { name: 'Autoencoder Basics', detail: 'Encoder-decoder, bottleneck, reconstruction loss, latent representation' },
+          { name: 'Variational Inference', detail: 'ELBO, KL divergence, prior N(0,I), approximate posterior' },
+          { name: 'Reparameterization Trick', detail: 'z = μ + σ·ε, moving randomness out of computation graph' },
+          { name: 'Loss Function', detail: 'Reconstruction loss (BCE or MSE) + KL loss. Beta-VAE weighting.' },
+          { name: 'Latent Space Operations', detail: 'Interpolation, attribute manipulation, sampling new faces' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'VAE Explained — AladdinPersson', url: 'https://www.youtube.com/watch?v=VELQT1-hILo', meta: 'Code + math walkthrough' },
+          { type: 'yt', icon: '▶', name: 'Variational Autoencoders — Arxiv Insights', url: 'https://www.youtube.com/watch?v=9zKuYvjFFS8', meta: 'Best intuition for VAE math' },
+          { type: 'docs', icon: '📗', name: 'Lil\'Log: From Autoencoder to Beta-VAE', url: 'https://lilianweng.github.io/posts/2018-08-12-vae/', meta: 'Lilian Weng — definitive VAE post' },
+          { type: 'github', icon: '⌨', name: 'CelebA Dataset (HuggingFace)', url: 'https://huggingface.co/datasets/celeba', meta: '200K celeb face images, 40 attributes' },
+        ],
+        papers: [
+          { title: 'Auto-Encoding Variational Bayes', authors: 'Kingma & Welling', year: '2013', url: 'https://arxiv.org/abs/1312.6114', why: 'The VAE paper. 9 pages. Section 2 (ELBO derivation) and Appendix B (reparameterization) are essential.' },
+          { title: 'beta-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework', authors: 'Higgins et al.', year: '2017', url: 'https://openreview.net/forum?id=Sy2fchegx', why: 'Shows that higher KL weight (β) produces disentangled latent spaces. Face attributes separate into meaningful dimensions.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Simple AE first', detail: 'Train a regular autoencoder on CelebA 64x64. Get good reconstructions.' },
+          { n: 2, title: 'Add variational objective', detail: 'Change encoder to output μ and log(σ²). Add KL term to loss.' },
+          { n: 3, title: 'Reparameterization', detail: 'Sample z = μ + σ·ε. Verify gradient flows back through μ and σ.' },
+          { n: 4, title: 'Tune β', detail: 'Increase KL weight. Notice trade-off: better structure, blurrier images.' },
+          { n: 5, title: 'Latent space exploration', detail: 'Interpolate between two face latent codes. Manipulate individual dimensions.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'KL vanishing (posterior collapse) — encoder ignores latent space. Anneal KL weight from 0 to 1 over first N epochs (KL annealing).' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Generated images too blurry — reconstruction loss with MSE/BCE doesn\'t penalize blurriness. This motivates GANs and diffusion.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Perceptual loss (VGG features) instead of pixel-level MSE produces sharper reconstructions. Worth implementing as extension.' },
+        ],
+      },
+      {
+        num: '19',
+        title: 'GAN: Anime Face Generator',
+        short: 'DCGAN implementation. Experience mode collapse. Learn discriminator-generator adversarial dynamics.',
+        tags: ['DCGAN', 'GAN', 'Discriminator', 'Generator', 'Mode Collapse', 'Wasserstein'],
+        keyInsight: 'Mode collapse happens when the generator finds a small set of outputs that fool the discriminator — it\'s a Nash equilibrium failure',
+        skills: [
+          { name: 'GAN Training Dynamics', detail: 'Minimax game, discriminator vs generator loss, training balance' },
+          { name: 'DCGAN Architecture', detail: 'Transposed conv, BN in G not D, LeakyReLU in D, Tanh output' },
+          { name: 'Mode Collapse', detail: 'Detection (loss curves, visual inspection), mitigation (minibatch discrimination, WGAN)' },
+          { name: 'Wasserstein GAN', detail: 'Earth mover distance, critic vs discriminator, gradient penalty' },
+          { name: 'FID Score', detail: 'Fréchet Inception Distance for quantitative evaluation of generated images' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'GANs from Scratch — Aladdin Persson', url: 'https://www.youtube.com/watch?v=OljTVUVzPpM', meta: 'Full DCGAN PyTorch tutorial' },
+          { type: 'yt', icon: '▶', name: 'GAN Explained — Yannic Kilcher', url: 'https://www.youtube.com/watch?v=eyxmSmjmNS0', meta: 'Theory + intuition' },
+          { type: 'docs', icon: '📗', name: 'Lil\'Log: GAN Post', url: 'https://lilianweng.github.io/posts/2017-08-20-gan/', meta: 'Complete GAN overview' },
+          { type: 'github', icon: '⌨', name: 'Anime Face Dataset', url: 'https://www.kaggle.com/datasets/splcher/animefacedataset', meta: '63K anime face images' },
+        ],
+        papers: [
+          { title: 'Generative Adversarial Nets', authors: 'Goodfellow et al.', year: '2014', url: 'https://arxiv.org/abs/1406.2661', why: 'Original GAN paper. The minimax formulation in Section 3 is what you\'ll implement. 8 pages.' },
+          { title: 'Unsupervised Representation Learning with Deep Convolutional GANs (DCGAN)', authors: 'Radford et al.', year: '2015', url: 'https://arxiv.org/abs/1511.06434', why: 'Architecture guidelines for stable GAN training. The 5 rules in Section 3 will save you hours of debugging.' },
+          { title: 'Wasserstein GAN', authors: 'Arjovsky et al.', year: '2017', url: 'https://arxiv.org/abs/1701.07875', why: 'Fixes mode collapse and unstable training. WGAN-GP is now the default baseline for GANs.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Implement discriminator', detail: 'CNN: real (1) vs fake (0). Train on real faces only first.' },
+          { n: 2, title: 'Implement generator', detail: 'Noise → Transposed CNN → 64x64 image. Verify output shape.' },
+          { n: 3, title: 'Adversarial training loop', detail: 'Alternate D and G updates. Watch for mode collapse in first 5 epochs.' },
+          { n: 4, title: 'Debug mode collapse', detail: 'Monitor D loss and G loss. If D loss → 0, generator failing. Try WGAN-GP.' },
+          { n: 5, title: 'FID evaluation', detail: 'Compute FID against real data. Target < 50 for anime faces.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Biggest Challenge', text: 'GAN training is unstable. D loss oscillates wildly. Use DCGAN guidelines: LR=2e-4, Adam β1=0.5, batch=128, label smoothing (0.9 for real, 0.1 for fake).' },
+          { type: 'hard', label: 'Blocker', text: 'Mode collapse: generator produces same face repeatedly. Switch to WGAN-GP. Clip discriminator weights or add gradient penalty.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Save a fixed noise vector at start. Generate images from it every epoch. This creates a visual training "movie" and makes mode collapse obvious immediately.' },
+        ],
+      },
+      {
+        num: '20',
+        title: 'Diffusion Model from Scratch',
+        short: 'DDPM on MNIST/CIFAR. Forward noising process, reverse denoising UNet. The math behind Stable Diffusion.',
+        tags: ['DDPM', 'Diffusion', 'Noise Schedule', 'UNet', 'Score Matching'],
+        keyInsight: 'Diffusion is just: learn to predict the noise added at each step. The sampling is running this backwards 1000 times.',
+        skills: [
+          { name: 'Forward Diffusion Process', detail: 'Beta schedule, closed-form q(x_t|x_0), reparameterization' },
+          { name: 'Reverse Process', detail: 'Parameterizing p_θ(x_{t-1}|x_t), noise prediction network' },
+          { name: 'UNet Denoiser', detail: 'Time-conditioning, sinusoidal time embeddings, skip connections' },
+          { name: 'DDPM Training', detail: 'Simple loss: MSE between predicted and actual noise. Why this works.' },
+          { name: 'Sampling (Inference)', detail: 'DDPM sampling loop, DDIM for faster sampling, CFG basics' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'DDPM Explained + Coded — AssemblyAI', url: 'https://www.youtube.com/watch?v=a4Yfz2FxXiY', meta: 'Best DDPM code tutorial' },
+          { type: 'yt', icon: '▶', name: 'Diffusion Models — Yannic Kilcher', url: 'https://www.youtube.com/watch?v=W-O7AZNzbzQ', meta: 'Theory walkthrough' },
+          { type: 'docs', icon: '📗', name: 'Lil\'Log: Diffusion Models', url: 'https://lilianweng.github.io/posts/2021-07-11-diffusion-models/', meta: 'Complete mathematical treatment' },
+          { type: 'github', icon: '⌨', name: 'lucidrains/denoising-diffusion-pytorch', url: 'https://github.com/lucidrains/denoising-diffusion-pytorch', meta: 'Clean PyTorch DDPM implementation' },
+        ],
+        papers: [
+          { title: 'Denoising Diffusion Probabilistic Models (DDPM)', authors: 'Ho, Jain, Abbeel', year: '2020', url: 'https://arxiv.org/abs/2006.11239', why: 'The paper that started the diffusion wave. Section 2 (background) + 3 (model). The simplified loss in Eq.14 is what you\'ll train.' },
+          { title: 'Denoising Diffusion Implicit Models (DDIM)', authors: 'Song et al.', year: '2020', url: 'https://arxiv.org/abs/2010.02502', why: 'Makes sampling 10-50x faster with no retraining. Key for practical use of diffusion models.' },
+          { title: 'Score-Based Generative Modeling through SDEs', authors: 'Song et al.', year: '2020', url: 'https://arxiv.org/abs/2011.13456', why: 'The mathematical framework unifying all diffusion models. Read after implementing DDPM.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Implement forward process', detail: 'Add noise at each timestep. Visualize x_0, x_200, x_500, x_1000.' },
+          { n: 2, title: 'Build UNet denoiser', detail: 'Time-conditioned UNet. Sinusoidal time embedding. Add to residual blocks.' },
+          { n: 3, title: 'Training loop', detail: 'Sample t, compute x_t, predict noise, MSE loss. Train on MNIST first.' },
+          { n: 4, title: 'Sampling loop', detail: 'Start from pure noise. Run reverse process 1000 steps. Generate images.' },
+          { n: 5, title: 'DDIM sampling', detail: 'Implement faster sampling (50 steps vs 1000). Compare quality.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Time conditioning is essential — without it the UNet doesn\'t know which noise level to denoise. Use sinusoidal embeddings (same as Transformer PE) and add to every residual block.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Normalizing inputs to [-1, 1] before training. The noise schedule assumes this range. Failing to normalize causes divergence.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Train on MNIST first (fast). Then CIFAR-10. Stable Diffusion is this same architecture but conditioned on CLIP text embeddings. The jump will feel manageable.' },
+        ],
+      },
+      {
+        num: '21',
+        title: 'Stable Diffusion Fine-tuning',
+        short: 'Fine-tune SD with DreamBooth or LoRA on 10-20 custom images. Text-to-image with your custom style/subject.',
+        tags: ['Stable Diffusion', 'DreamBooth', 'LoRA', 'CLIP', 'diffusers', 'HuggingFace'],
+        keyInsight: 'LoRA adds only 0.1% trainable parameters but can inject entirely new concepts into the model. Understand WHY before using it.',
+        skills: [
+          { name: 'Stable Diffusion Architecture', detail: 'VAE encoder/decoder, U-Net denoiser, CLIP text encoder, CFG' },
+          { name: 'DreamBooth', detail: 'Prior preservation loss, rare token binding, subject vs style training' },
+          { name: 'LoRA (Low-Rank Adaptation)', detail: 'Weight matrices as low-rank updates, rank selection, merging' },
+          { name: 'Classifier-Free Guidance', detail: 'Conditional vs unconditional generation, guidance scale tradeoff' },
+          { name: 'diffusers Library', detail: 'StableDiffusionPipeline, schedulers, custom training scripts' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'DreamBooth Explained + Training Guide', url: 'https://www.youtube.com/watch?v=W4Mcuh38wyM', meta: 'Practical fine-tuning walkthrough' },
+          { type: 'yt', icon: '▶', name: 'LoRA Explained — Sebastian Raschka', url: 'https://www.youtube.com/watch?v=dA-NhCtrrVE', meta: 'Best mathematical explanation of LoRA' },
+          { type: 'docs', icon: '📗', name: 'HuggingFace diffusers Docs', url: 'https://huggingface.co/docs/diffusers/', meta: 'Official diffusers docs' },
+          { type: 'docs', icon: '📗', name: 'HF DreamBooth Training Guide', url: 'https://huggingface.co/docs/diffusers/training/dreambooth', meta: 'Official DreamBooth tutorial' },
+        ],
+        papers: [
+          { title: 'High-Resolution Image Synthesis with Latent Diffusion Models (Stable Diffusion)', authors: 'Rombach et al.', year: '2021', url: 'https://arxiv.org/abs/2112.10752', why: 'The paper behind Stable Diffusion. Latent space diffusion instead of pixel space — 4x faster with same quality.' },
+          { title: 'DreamBooth: Fine Tuning Text-to-Image Diffusion Models for Subject-Driven Generation', authors: 'Ruiz et al.', year: '2022', url: 'https://arxiv.org/abs/2208.12242', why: 'DreamBooth paper. Section 3 explains prior preservation loss — critical for avoiding catastrophic forgetting.' },
+          { title: 'LoRA: Low-Rank Adaptation of Large Language Models', authors: 'Hu et al.', year: '2021', url: 'https://arxiv.org/abs/2106.09685', why: 'LoRA paper (originally for LLMs, adopted for SD). Section 2 explains the low-rank hypothesis. Clean math.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Run SD baseline', detail: 'Use diffusers to generate images from prompts. Understand the pipeline components.' },
+          { n: 2, title: 'Prepare training images', detail: '10-20 high-quality photos. Caption them consistently with rare token (e.g., "a photo of sks person").' },
+          { n: 3, title: 'DreamBooth training', detail: 'Use diffusers training script. Run on Colab A100. Monitor prior preservation loss.' },
+          { n: 4, title: 'Try LoRA instead', detail: 'kohya-ss or diffusers LoRA training. Compare quality vs DreamBooth.' },
+          { n: 5, title: 'Prompt engineering', detail: 'Try different guidance scales (7-15). Style transfer prompts. Negative prompts.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'GPU memory: DreamBooth needs 24GB VRAM minimum. Use Colab A100 (25 compute units) or use LoRA which runs on 8GB. Low-VRAM guide in diffusers docs.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Overfitting on 10 images causes catastrophic forgetting. Enable prior preservation loss with class images. Without it, the model forgets how to generate anything else.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Use the free Colab A100 tier for this project. Test with LoRA first (faster, cheaper) before committing to full DreamBooth.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'p6',
+    color: '#facc15',
+    label: 'Phase 6',
+    title: 'Large Language Models',
+    desc: 'Every previous phase was preparation for this. You now understand embeddings, attention, transformers, and diffusion. Build a GPT, fine-tune an LLM, build a RAG system, deploy an agent.',
+    projects: [
+      {
+        num: '22',
+        title: 'GPT from Scratch',
+        short: 'Full GPT architecture in PyTorch. Token + positional embeddings, multi-head self-attention, layer norm, FF blocks. Train on Shakespeare.',
+        tags: ['Transformer', 'GPT', 'Self-Attention', 'LayerNorm', 'Autoregressive', 'nanoGPT'],
+        keyInsight: 'After project 17 (attention) and 05 (backprop), this is just combining them. The architecture is 5 components stacked.',
+        skills: [
+          { name: 'GPT Architecture', detail: 'Token embedding, causal self-attention, FFN (SwiGLU), layer norm, LM head' },
+          { name: 'Causal Language Modeling', detail: 'Next-token prediction, cross-entropy over token vocab, teacher forcing' },
+          { name: 'Tokenization', detail: 'BPE algorithm, character-level vs BPE vs WordPiece tradeoffs, tiktoken' },
+          { name: 'Scaling & Training', detail: 'Gradient accumulation, mixed precision (bf16), gradient clipping' },
+          { name: 'Text Generation', detail: 'Temperature, top-k, top-p (nucleus) sampling, repetition penalty' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'Karpathy: Let\'s Build GPT from Scratch', url: 'https://www.youtube.com/watch?v=kCc8FmEb1nY', meta: '2hr video — the best ML tutorial ever made' },
+          { type: 'github', icon: '⌨', name: 'karpathy/nanoGPT', url: 'https://github.com/karpathy/nanoGPT', meta: 'Clean ~300 line GPT implementation' },
+          { type: 'yt', icon: '▶', name: 'Karpathy: Let\'s build the GPT Tokenizer', url: 'https://www.youtube.com/watch?v=zduSFxRajkE', meta: 'BPE tokenizer from scratch' },
+          { type: 'docs', icon: '📗', name: 'The Illustrated GPT-2 — Jay Alammar', url: 'https://jalammar.github.io/illustrated-gpt2/', meta: 'Visual GPT architecture walkthrough' },
+        ],
+        papers: [
+          { title: 'Attention Is All You Need', authors: 'Vaswani et al.', year: '2017', url: 'https://arxiv.org/abs/1706.03762', why: 'Re-read now. You built attention in project 17. The full Transformer architecture is what you\'re implementing here.' },
+          { title: 'Language Models are Unsupervised Multitask Learners (GPT-2)', authors: 'Radford et al.', year: '2019', url: 'https://d4mucfpksywv.cloudfront.net/better-language-models/language-models.pdf', why: 'GPT-2 paper. Decoder-only architecture. Zero-shot task performance emerges from scale.' },
+          { title: 'Improving Language Understanding by Generative Pre-Training (GPT-1)', authors: 'Radford et al.', year: '2018', url: 'https://openai.com/research/language-unsupervised', why: 'The original GPT paper. Clean and readable. Establishes the pretrain-then-finetune paradigm.' },
+          { title: 'RoFormer: Enhanced Transformer with Rotary Position Embedding (RoPE)', authors: 'Su et al.', year: '2021', url: 'https://arxiv.org/abs/2104.09864', why: 'RoPE is used in LLaMA and GPT-4. Understand it when scaling to larger models.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Character-level LM on Shakespeare', detail: 'Start small: 65-char vocab, 6 layers, 6 heads. Follow nanoGPT exactly.' },
+          { n: 2, title: 'Scale up', detail: 'Increase n_embd, n_layer, n_head. Observe perplexity improvement.' },
+          { n: 3, title: 'BPE tokenizer', detail: 'Replace char-level with BPE. Use tiktoken or implement BPE training.' },
+          { n: 4, title: 'Sampling strategies', detail: 'Implement temperature, top-k, top-p. See how each affects generated text.' },
+          { n: 5, title: 'Train on larger corpus', detail: 'Wikipedia subset or OpenWebText. Use gradient accumulation + bf16.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Out of memory errors when scaling. Use gradient checkpointing (torch.utils.checkpoint), mixed precision (torch.amp.autocast), and smaller batch with gradient accumulation.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Pre-norm vs post-norm: modern GPTs use pre-norm (LayerNorm before attention/FFN). Post-norm (original paper) is less stable at depth.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Start with the exact nanoGPT architecture. Don\'t optimize yet. Get it running, generating text, then understand what each component does before modifying.' },
+        ],
+      },
+      {
+        num: '23',
+        title: 'Fine-tune LLaMA 3 with QLoRA',
+        short: 'Fine-tune Llama 3.2 3B or Mistral 7B on domain-specific data. 4-bit quantization + LoRA. Instruction tuning.',
+        tags: ['LLaMA 3', 'QLoRA', 'PEFT', 'Instruction Tuning', '4-bit Quantization', 'Alpaca'],
+        keyInsight: 'QLoRA proves you don\'t need thousands of GPU hours — 4-bit + LoRA makes LLM fine-tuning accessible on a single A100',
+        skills: [
+          { name: 'Quantization (4-bit NF4)', detail: 'NormalFloat4, double quantization, bitsandbytes library' },
+          { name: 'LoRA for LLMs', detail: 'Which layers to LoRA (attention vs all), rank selection, alpha scaling' },
+          { name: 'Instruction Tuning Format', detail: 'Alpaca format, ChatML format, system/user/assistant turns' },
+          { name: 'PEFT Library', detail: 'get_peft_model, LoraConfig, merging weights, saving adapters' },
+          { name: 'Evaluation', detail: 'Perplexity, instruction following rate, human eval, MT-Bench' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'QLoRA Fine-tuning — Andrej Karpathy explanation', url: 'https://www.youtube.com/watch?v=kPGTx4wcm_w', meta: 'QLoRA intuition and practice' },
+          { type: 'yt', icon: '▶', name: 'Fine-tune Llama 3 — Maxime Labonne', url: 'https://www.youtube.com/watch?v=eC6Hd1hFvos', meta: 'Step-by-step LLaMA fine-tuning' },
+          { type: 'docs', icon: '📗', name: 'HuggingFace PEFT docs', url: 'https://huggingface.co/docs/peft/', meta: 'Official PEFT library docs' },
+          { type: 'docs', icon: '📗', name: 'Unsloth — Fast QLoRA', url: 'https://github.com/unslothai/unsloth', meta: '2x faster LoRA training, free Colab notebooks' },
+        ],
+        papers: [
+          { title: 'QLoRA: Efficient Finetuning of Quantized LLMs', authors: 'Dettmers et al.', year: '2023', url: 'https://arxiv.org/abs/2305.14314', why: 'The QLoRA paper. Section 2 explains NF4 quantization and double quantization. Made fine-tuning 65B models on a single A100.' },
+          { title: 'LLaMA: Open and Efficient Foundation Language Models', authors: 'Touvron et al.', year: '2023', url: 'https://arxiv.org/abs/2302.13971', why: 'LLaMA architecture: RoPE, SwiGLU, RMSNorm. Different from GPT-2 in important ways.' },
+          { title: 'Self-Instruct: Aligning Language Models with Self-Generated Instructions', authors: 'Wang et al.', year: '2022', url: 'https://arxiv.org/abs/2212.10560', why: 'How to generate instruction-tuning data automatically. Foundation of Alpaca-style datasets.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Prepare dataset', detail: 'Choose domain (medical QA, code, legal). Format as Alpaca JSON: instruction, input, output.' },
+          { n: 2, title: '4-bit load + LoRA config', detail: 'BitsAndBytes NF4 config. LoraConfig: r=16, alpha=32, target q_proj,v_proj.' },
+          { n: 3, title: 'SFTTrainer training', detail: 'trl SFTTrainer or HF Trainer. Monitor loss curve. Train 1-3 epochs.' },
+          { n: 4, title: 'Merge LoRA weights', detail: 'merge_and_unload(). Save full model in float16.' },
+          { n: 5, title: 'Evaluate', detail: 'Qualitative: test 20 prompts. Quantitative: measure perplexity vs base model.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'OOM on Colab T4. Use Unsloth (2x memory efficient) or reduce batch size + increase gradient accumulation. max_seq_length=512 is usually enough.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Poor instruction dataset quality ruins fine-tuning. 1000 high-quality examples beats 100K noisy ones. Manually check your data before training.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Use Unsloth — it\'s 2x faster than stock HuggingFace training and has pre-made Colab notebooks for LLaMA 3, Mistral, Gemma. Start there.' },
+        ],
+      },
+      {
+        num: '24',
+        title: 'RAG: Chat with Documents',
+        short: 'Full RAG pipeline: chunk PDFs → embed → ChromaDB → retrieve → LLM generates. Real-world production pattern.',
+        tags: ['RAG', 'ChromaDB', 'LangChain', 'sentence-transformers', 'FAISS', 'Vector DB'],
+        keyInsight: 'RAG is retrieval + generation — the retrieval quality matters more than the LLM. Bad chunks = bad answers regardless of model size.',
+        skills: [
+          { name: 'Document Chunking', detail: 'Recursive text splitter, chunk size vs overlap, semantic chunking' },
+          { name: 'Embedding Models', detail: 'sentence-transformers (all-MiniLM-L6), OpenAI embeddings, BGE models' },
+          { name: 'Vector Databases', detail: 'ChromaDB (local), FAISS, Pinecone. Cosine vs dot-product similarity.' },
+          { name: 'Retrieval Strategies', detail: 'Top-k retrieval, MMR for diversity, hybrid (BM25 + dense), reranking' },
+          { name: 'RAG Evaluation', detail: 'RAGAS framework: faithfulness, answer relevancy, context precision' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'RAG from Scratch — LangChain series (12 videos)', url: 'https://www.youtube.com/watch?v=wd7TZ4w1mSw', meta: 'Comprehensive RAG series' },
+          { type: 'yt', icon: '▶', name: 'Build RAG App with Ollama + ChromaDB', url: 'https://www.youtube.com/watch?v=2TJxpyO3ei4', meta: 'Local RAG, no API keys needed' },
+          { type: 'docs', icon: '📗', name: 'LangChain RAG Documentation', url: 'https://python.langchain.com/docs/use_cases/question_answering/', meta: 'Official RAG guide' },
+          { type: 'docs', icon: '📗', name: 'RAGAS Evaluation Framework', url: 'https://docs.ragas.io/', meta: 'RAG evaluation toolkit' },
+        ],
+        papers: [
+          { title: 'Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks', authors: 'Lewis et al. (Meta AI)', year: '2020', url: 'https://arxiv.org/abs/2005.11401', why: 'The RAG paper. Figure 1 shows the architecture you\'ll build. Section 3 explains the retrieval-augmented generation objective.' },
+          { title: 'Precise Zero-Shot Dense Retrieval without Relevance Labels (HyDE)', authors: 'Gao et al.', year: '2022', url: 'https://arxiv.org/abs/2212.10496', why: 'Hypothetical Document Embeddings — generate a hypothetical answer, embed it, retrieve. Often beats standard RAG.' },
+          { title: 'Lost in the Middle: How Language Models Use Long Contexts', authors: 'Liu et al.', year: '2023', url: 'https://arxiv.org/abs/2307.03172', why: 'Shows LLMs ignore middle context in long prompts. Critical for RAG: put retrieved docs at start and end, not middle.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Load + chunk documents', detail: 'PDF/text → LangChain RecursiveTextSplitter. 512 tokens, 50 overlap.' },
+          { n: 2, title: 'Embed + store', detail: 'sentence-transformers → ChromaDB. Test similarity search.' },
+          { n: 3, title: 'Build retrieval chain', detail: 'Query → embed → top-5 chunks → inject into LLM prompt.' },
+          { n: 4, title: 'Full QA interface', detail: 'Gradio/Streamlit chat UI. Upload PDF → ask questions.' },
+          { n: 5, title: 'Evaluate with RAGAS', detail: 'Faithfulness, answer relevancy, context recall. Fix weakest metric.' },
+          { n: 6, title: 'Add reranking', detail: 'Retrieve top-20, rerank with cross-encoder, pass top-5 to LLM. Measure improvement.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Bad chunking kills RAG quality. Chunks that split mid-sentence or mid-table confuse the LLM. Use semantic chunking or at minimum 50-token overlap between chunks.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Embedding the question against chunk embeddings works but is fragile. HyDE (embed a hypothetical answer) often improves retrieval recall by 10-15%.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Build local-first with Ollama + Llama 3 + ChromaDB. Zero cost, complete privacy, and you understand every component. Only add API keys for production.' },
+        ],
+      },
+      {
+        num: '25',
+        title: 'LLM Agent with Tool Use',
+        short: 'Implement ReAct loop manually. Agent that can search the web, execute code, use a calculator. Understand agent loops before using frameworks.',
+        tags: ['ReAct', 'Tool Use', 'Function Calling', 'Agent Loop', 'OpenAI API', 'LangGraph'],
+        keyInsight: 'An agent is just an LLM in a loop with tools. The loop is: observe → reason → act. Implement this loop manually before using LangGraph.',
+        skills: [
+          { name: 'ReAct Framework', detail: 'Thought, Action, Observation loop. Prompt engineering for reasoning.' },
+          { name: 'Function Calling', detail: 'OpenAI function calling API, tool JSON schema, structured output parsing' },
+          { name: 'Tool Implementation', detail: 'Web search (Tavily/SerpAPI), code execution (subprocess), calculator' },
+          { name: 'Agent Memory', detail: 'Conversation history, tool results in context, summarization for long conversations' },
+          { name: 'Error Handling', detail: 'Tool failures, retry logic, max iterations, guardrails' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'Build an AI Agent from Scratch — LangChain', url: 'https://www.youtube.com/watch?v=DWUdGFCVLIc', meta: 'From scratch agent implementation' },
+          { type: 'yt', icon: '▶', name: 'LangGraph Tutorial — full course', url: 'https://www.youtube.com/watch?v=jGg5oECMvgw', meta: 'Production agent framework' },
+          { type: 'docs', icon: '📗', name: 'OpenAI Function Calling Docs', url: 'https://platform.openai.com/docs/guides/function-calling', meta: 'Official function calling guide' },
+          { type: 'docs', icon: '📗', name: 'LangGraph Docs', url: 'https://langchain-ai.github.io/langgraph/', meta: 'State machine agents' },
+        ],
+        papers: [
+          { title: 'ReAct: Synergizing Reasoning and Acting in Language Models', authors: 'Yao et al.', year: '2022', url: 'https://arxiv.org/abs/2210.03629', why: 'The ReAct paper. Thought-Action-Observation loop. What you\'ll implement. Read it before coding.' },
+          { title: 'Toolformer: Language Models Can Teach Themselves to Use Tools', authors: 'Schick et al.', year: '2023', url: 'https://arxiv.org/abs/2302.04761', why: 'How to self-teach tool use. Important for understanding how modern LLMs learn function calling.' },
+          { title: 'AgentBench: Evaluating LLMs as Agents', authors: 'Liu et al.', year: '2023', url: 'https://arxiv.org/abs/2308.03688', why: 'Benchmark for agent capabilities. Use it to evaluate your agent\'s performance.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'Manual ReAct loop', detail: 'String parsing: extract Thought/Action/Observation from LLM output. No framework.' },
+          { n: 2, title: 'Implement 3 tools', detail: 'Calculator, Wikipedia search, Python executor. Test each independently.' },
+          { n: 3, title: 'Connect tools to loop', detail: 'Agent calls tool, inserts result as Observation, continues loop.' },
+          { n: 4, title: 'Add function calling', detail: 'Use OpenAI function calling API. Cleaner than string parsing.' },
+          { n: 5, title: 'Port to LangGraph', detail: 'Convert to LangGraph state machine. Add conditional edges, human-in-loop.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Infinite agent loops — always add max_iterations=10 and a stopping condition. LLMs sometimes refuse to use Final Answer format.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Context window overflow from long tool results. Truncate tool outputs to 1500 tokens. Summarize long web search results before injecting.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Implement ReAct with a local LLaMA (Ollama) first — it\'s free and you understand every API call. Switch to GPT-4 for the hardest tasks only.' },
+        ],
+      },
+      {
+        num: '26',
+        title: 'Multimodal: OCR → RAG → LLM',
+        short: 'Final capstone. OCR extracts text from document images → embeddings in vector DB → LLM answers questions. All 6 phases in one system.',
+        tags: ['Multimodal', 'VLM', 'OCR', 'RAG', 'End-to-End', 'Production'],
+        keyInsight: 'This is not a new concept — it\'s project 15 + project 24 + project 25 wired together. The value is in the integration.',
+        skills: [
+          { name: 'Vision-Language Models', detail: 'GPT-4V, LLaVA, Qwen-VL: direct image + text input for visual QA' },
+          { name: 'Document Intelligence', detail: 'Layout-aware OCR, table extraction, form understanding, LayoutLM' },
+          { name: 'Multimodal RAG', detail: 'Embedding images + text together, CLIP for visual retrieval' },
+          { name: 'End-to-End Pipeline Design', detail: 'Input validation, error handling, logging, monitoring, latency optimization' },
+          { name: 'Gradio / Streamlit Production', detail: 'File upload, multi-turn conversation, session state, deployment to HF Spaces' },
+        ],
+        resources: [
+          { type: 'yt', icon: '▶', name: 'Build Multimodal RAG — James Briggs', url: 'https://www.youtube.com/watch?v=uLrReyH5cu0', meta: 'Multi-modal RAG with images' },
+          { type: 'yt', icon: '▶', name: 'LLaVA: Multimodal LLM — Yannic Kilcher', url: 'https://www.youtube.com/watch?v=hvdl6FpuJEI', meta: 'VLM architecture explained' },
+          { type: 'docs', icon: '📗', name: 'LayoutLMv3 HuggingFace', url: 'https://huggingface.co/microsoft/layoutlmv3-base', meta: 'Layout-aware document understanding' },
+          { type: 'docs', icon: '📗', name: 'HF Spaces Deployment Guide', url: 'https://huggingface.co/docs/hub/spaces', meta: 'Deploy to HuggingFace Spaces for free' },
+        ],
+        papers: [
+          { title: 'LLaVA: Visual Instruction Tuning', authors: 'Liu et al.', year: '2023', url: 'https://arxiv.org/abs/2304.08485', why: 'Open-source GPT-4V equivalent. Architecture: CLIP vision encoder + LLaMA LLM + linear projection. Buildable on consumer GPU.' },
+          { title: 'LayoutLMv3: Pre-training for Document AI with Unified Text and Image Masking', authors: 'Huang et al.', year: '2022', url: 'https://arxiv.org/abs/2204.08387', why: 'State-of-art for document understanding. Handles text + layout + image simultaneously. Critical for real document processing.' },
+          { title: 'CLIP: Learning Transferable Visual Models from Natural Language Supervision', authors: 'Radford et al.', year: '2021', url: 'https://arxiv.org/abs/2103.00020', why: 'CLIP embeddings connect vision and language. Powers image retrieval in multimodal RAG. The most used vision-language model.' },
+        ],
+        roadmap: [
+          { n: 1, title: 'OCR extraction layer', detail: 'PaddleOCR or EasyOCR. Handle multi-column layouts. Output structured text with bounding boxes.' },
+          { n: 2, title: 'Multimodal chunking', detail: 'Chunk text + associate original image regions. Preserve spatial context.' },
+          { n: 3, title: 'VLM direct path', detail: 'For simple queries: send image directly to GPT-4V or LLaVA. Skip OCR.' },
+          { n: 4, title: 'RAG path', detail: 'For complex docs: OCR → chunk → embed → retrieve → LLM. Route queries intelligently.' },
+          { n: 5, title: 'Full UI', detail: 'Gradio: upload PDF/image, ask questions, cite source regions, display confidence.' },
+          { n: 6, title: 'Deploy to HF Spaces', detail: 'Push to HuggingFace Spaces. Public URL. Add to portfolio.' },
+        ],
+        hurdles: [
+          { type: 'hard', label: 'Blocker', text: 'Routing decisions: when to use OCR+RAG vs direct VLM. Use VLM for <5 pages, RAG for longer documents. Implement simple page-count-based router.' },
+          { type: 'medium', label: 'Common Pitfall', text: 'Multi-column PDFs destroy linear OCR. Use PaddleOCR layout analysis or pdfplumber\'s table extraction to handle complex layouts before chunking.' },
+          { type: 'tip', label: 'Pro Tip', text: 'Host on HuggingFace Spaces (free). This becomes your portfolio centerpiece — a live, usable app that demonstrates every major ML concept in one place.' },
+        ],
+      },
+    ],
+  },
+];
 
-<div class="section">
-<h2>Phase 3 : Computer Vision</h2>
+// ═══════════════════════════════════════════════════════════
+// RENDER ENGINE
+// ═══════════════════════════════════════════════════════════
 
-<h3>CNN Fundamentals</h3>
-<ul>
-<li>Convolution</li>
-<li>Kernel</li>
-<li>Stride</li>
-<li>Padding</li>
-<li>Pooling</li>
-<li>Feature Maps</li>
-<li>Receptive Field</li>
-</ul>
+let currentProject = null;
+let allProjects = [];
 
-<h3>Architectures</h3>
-<ul>
-<li>LeNet</li>
-<li>AlexNet</li>
-<li>VGG</li>
-<li>ResNet</li>
-<li>EfficientNet</li>
-</ul>
+// Flatten all projects for navigation
+phases.forEach(ph => {
+  ph.projects.forEach(pr => {
+    allProjects.push({ ...pr, phaseColor: ph.color, phaseName: ph.label + ' · ' + ph.title });
+  });
+});
 
-<h3>Transfer Learning</h3>
-<ul>
-<li>Feature Extraction</li>
-<li>Fine Tuning</li>
-<li>Layer Freezing</li>
-</ul>
+function renderPhaseNav() {
+  const nav = document.getElementById('phase-nav');
+  phases.forEach(ph => {
+    const btn = document.createElement('button');
+    btn.className = 'pnav-btn';
+    btn.style.setProperty('--c', ph.color);
+    btn.innerHTML = `<span class="pnav-dot"></span>${ph.label}: ${ph.title}`;
+    btn.onclick = () => {
+      document.getElementById(ph.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    nav.appendChild(btn);
+  });
+}
 
-<h3>Object Detection</h3>
-<ul>
-<li>Bounding Boxes</li>
-<li>IoU</li>
-<li>NMS</li>
-<li>mAP</li>
-<li>YOLO</li>
-</ul>
+function renderPhases() {
+  const container = document.getElementById('phases-container');
+  phases.forEach((ph, pi) => {
+    const section = document.createElement('div');
+    section.className = 'phase-section';
+    section.id = ph.id;
+    section.style.setProperty('--c', ph.color);
+    section.style.animationDelay = (pi * 0.08) + 's';
 
-<h3>Segmentation</h3>
-<ul>
-<li>Semantic Segmentation</li>
-<li>Instance Segmentation</li>
-<li>U-Net</li>
-<li>SAM</li>
-<li>Dice Loss</li>
-</ul>
-</div>
+    const head = `
+      <div class="phase-head">
+        <span class="phase-label">${ph.label}</span>
+        <span class="phase-title">${ph.title}</span>
+      </div>
+      <p class="phase-desc">${ph.desc}</p>
+    `;
 
-<!-- ===================================== -->
-<!-- PHASE 4 -->
-<!-- ===================================== -->
+    const grid = document.createElement('div');
+    grid.className = 'project-grid';
 
-<div class="section">
-<h2>Phase 4 : NLP</h2>
+    ph.projects.forEach((pr, i) => {
+      const globalIdx = allProjects.findIndex(p => p.num === pr.num);
+      const card = document.createElement('div');
+      card.className = 'pcard';
+      card.innerHTML = `
+        <div class="pcard-top">
+          <span class="pcard-num">/ ${pr.num}</span>
+          <div class="pcard-open"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17L17 7"/></svg></div>
+        </div>
+        <div class="pcard-title">${pr.title}</div>
+        <div class="pcard-desc">${pr.short}</div>
+        <div class="pcard-tags">${pr.tags.map(t => `<span class="ptag">${t}</span>`).join('')}</div>
+        ${pr.keyInsight ? `<div class="pcard-key">${pr.keyInsight}</div>` : ''}
+      `;
+      card.onclick = () => openModal(globalIdx);
+      grid.appendChild(card);
+    });
 
-<h3>Text Processing</h3>
-<ul>
-<li>Tokenization</li>
-<li>Stemming</li>
-<li>Lemmatization</li>
-<li>Stop Words</li>
-</ul>
+    section.innerHTML = head;
+    section.appendChild(grid);
+    container.appendChild(section);
+  });
+}
 
-<h3>Embeddings</h3>
-<ul>
-<li>Word2Vec</li>
-<li>GloVe</li>
-<li>FastText</li>
-</ul>
+function renderIcon(type) {
+  const m = { yt: '▶', paper: '◆', docs: '⬡', course: '⊕', book: '⊞', github: '◎' };
+  return m[type] || '→';
+}
 
-<h3>Sequence Models</h3>
-<ul>
-<li>RNN</li>
-<li>LSTM</li>
-<li>GRU</li>
-</ul>
+function openModal(idx) {
+  currentProject = idx;
+  const pr = allProjects[idx];
+  document.getElementById('modal-stripe').style.background = pr.phaseColor;
+  document.getElementById('modal-phase-tag').textContent = pr.phaseName;
+  document.getElementById('modal-phase-tag').style.color = pr.phaseColor;
+  document.getElementById('modal-phase-tag').style.borderColor = pr.phaseColor + '33';
+  document.getElementById('modal-phase-tag').style.background = pr.phaseColor + '18';
+  document.getElementById('modal-title').textContent = pr.title;
+  document.getElementById('modal-num').textContent = pr.num;
 
-<h3>Attention</h3>
-<ul>
-<li>Query</li>
-<li>Key</li>
-<li>Value</li>
-<li>Self Attention</li>
-</ul>
+  const body = document.getElementById('modal-body');
+  body.style.setProperty('--c', pr.phaseColor);
+  body.innerHTML = `
+    <!-- Col 1: Description + Skills -->
+    <div class="modal-col">
+      <div class="section-title">What you build</div>
+      <p class="modal-desc">${pr.short}</p>
+      ${pr.keyInsight ? `<div style="margin: 16px 0; padding: 12px 14px; border-radius: 6px; border-left: 3px solid ${pr.phaseColor}; background: ${pr.phaseColor}0f; font-size: 11px; color: ${pr.phaseColor}; line-height: 1.6; font-style: italic;">${pr.keyInsight}</div>` : ''}
+      
+      <div class="section-title" style="margin-top: 24px;">Skills to acquire</div>
+      <div class="skill-list">
+        ${pr.skills.map(s => `
+          <div class="skill-item">
+            <div class="skill-dot" style="background:${pr.phaseColor}"></div>
+            <div>
+              <div class="skill-name">${s.name}</div>
+              <div class="skill-detail">${s.detail}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
 
-<h3>NLP Tasks</h3>
-<ul>
-<li>NER</li>
-<li>Sentiment Analysis</li>
-<li>Translation</li>
-<li>Summarization</li>
-</ul>
-</div>
+    <!-- Col 2: Resources -->
+    <div class="modal-col">
+      <div class="section-title">Resources</div>
+      <div class="res-list">
+        ${pr.resources.map(r => `
+          <a class="res-item" href="${r.url}" target="_blank" rel="noopener">
+            <div class="res-icon ${r.type}">${r.icon}</div>
+            <div class="res-text">
+              <div class="res-name">${r.name}</div>
+              <div class="res-meta">${r.meta}</div>
+            </div>
+            <div class="res-arrow">↗</div>
+          </a>
+        `).join('')}
+      </div>
+    </div>
 
-<!-- ===================================== -->
-<!-- PHASE 5 -->
-<!-- ===================================== -->
+    <!-- Full: Papers -->
+    <div class="modal-col full">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div>
+          <div class="section-title">Research Papers</div>
+          <div class="paper-list">
+            ${pr.papers.map(p => `
+              <a class="paper-item" href="${p.url}" target="_blank" rel="noopener">
+                <div class="paper-title">${p.title}</div>
+                <div class="paper-meta">
+                  <span>${p.authors.split(',')[0]} et al.</span>
+                  <span>${p.year}</span>
+                </div>
+                <div class="paper-why">${p.why}</div>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+        <div>
+          <div class="section-title">Build Roadmap</div>
+          <div class="roadmap-steps">
+            ${pr.roadmap.map(s => `
+              <div class="roadmap-step">
+                <div class="step-dot" style="border-color:${pr.phaseColor}; background:${pr.phaseColor}18; color:${pr.phaseColor}">${s.n}</div>
+                <div class="step-content">
+                  <div class="step-title">${s.title}</div>
+                  <div class="step-detail">${s.detail}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
 
-<div class="section">
-<h2>Phase 5 : Transformers & LLMs</h2>
+    <!-- Full: Hurdles -->
+    <div class="modal-col full" style="padding-top: 0;">
+      <div class="section-title">Hurdles & How to Overcome Them</div>
+      <div class="hurdle-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px;">
+        ${pr.hurdles.map(h => `
+          <div class="hurdle-item ${h.type}">
+            <div class="hurdle-label">${h.label}</div>
+            <div class="hurdle-text">${h.text}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
 
-<h3>Transformer Architecture</h3>
-<ul>
-<li>Encoder</li>
-<li>Decoder</li>
-<li>Multi Head Attention</li>
-<li>Positional Encoding</li>
-<li>Residual Connections</li>
-<li>Layer Normalization</li>
-</ul>
+  const footer = document.getElementById('modal-footer');
+  footer.style.setProperty('--c', pr.phaseColor);
+  const prev = idx > 0 ? allProjects[idx - 1] : null;
+  const next = idx < allProjects.length - 1 ? allProjects[idx + 1] : null;
+  footer.innerHTML = `
+    ${prev ? `<button class="mf-prev" onclick="openModal(${idx-1})">← ${prev.num} ${prev.title}</button>` : '<div></div>'}
+    <span class="mf-num">${idx+1} / ${allProjects.length}</span>
+    ${next ? `<button class="mf-next" onclick="openModal(${idx+1})">${next.num} ${next.title} →</button>` : '<div></div>'}
+  `;
 
-<h3>Models</h3>
-<ul>
-<li>BERT</li>
-<li>GPT</li>
-<li>T5</li>
-<li>LLaMA</li>
-</ul>
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('modal').scrollTop = 0;
+}
 
-<h3>Training Concepts</h3>
-<ul>
-<li>Next Token Prediction</li>
-<li>Masked Language Modeling</li>
-<li>Causal Language Modeling</li>
-</ul>
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
 
-<h3>Fine Tuning</h3>
-<ul>
-<li>Full Fine Tuning</li>
-<li>LoRA</li>
-<li>QLoRA</li>
-<li>PEFT</li>
-</ul>
-</div>
+document.getElementById('modal-close').onclick = closeModal;
+document.getElementById('modal-overlay').onclick = (e) => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+};
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'ArrowRight' && currentProject !== null && currentProject < allProjects.length - 1) openModal(currentProject + 1);
+  if (e.key === 'ArrowLeft' && currentProject !== null && currentProject > 0) openModal(currentProject - 1);
+});
 
-<!-- ===================================== -->
-<!-- PHASE 6 -->
-<!-- ===================================== -->
-
-<div class="section">
-<h2>Phase 6 : GenAI & Production AI</h2>
-
-<h3>Prompt Engineering</h3>
-<ul>
-<li>Zero Shot</li>
-<li>One Shot</li>
-<li>Few Shot</li>
-<li>Chain of Thought</li>
-<li>ReAct</li>
-</ul>
-
-<h3>Vector Databases</h3>
-<ul>
-<li>Embeddings</li>
-<li>FAISS</li>
-<li>ChromaDB</li>
-<li>Similarity Search</li>
-</ul>
-
-<h3>RAG</h3>
-<ul>
-<li>Chunking</li>
-<li>Retrieval</li>
-<li>Re-ranking</li>
-<li>Hybrid Search</li>
-</ul>
-
-<h3>Agents</h3>
-<ul>
-<li>Tool Calling</li>
-<li>Memory</li>
-<li>Planning</li>
-<li>Multi-Agent Systems</li>
-</ul>
-
-<h3>MLOps</h3>
-<ul>
-<li>Docker</li>
-<li>FastAPI</li>
-<li>MLflow</li>
-<li>DVC</li>
-<li>Weights & Biases</li>
-<li>Kubernetes</li>
-</ul>
-</div>
-
-<!-- ===================================== -->
-<!-- RESEARCH PAPERS -->
-<!-- ===================================== -->
-
-<div class="section">
-<h2>Research Papers Notes</h2>
-
-<ul>
-<li>Attention Is All You Need</li>
-<li>ResNet</li>
-<li>AlexNet</li>
-<li>YOLO</li>
-<li>U-Net</li>
-<li>Word2Vec</li>
-<li>BERT</li>
-<li>GPT Series</li>
-<li>LLaMA</li>
-</ul>
-</div>
-
+// Init
+renderPhaseNav();
+renderPhases();
+</script>
+    <a herf="../note.html> notebook </a>
 </body>
 </html>
-```
